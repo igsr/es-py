@@ -3,18 +3,24 @@ import mysql.connector
 
 class PopulationDetailsFetcher:
     def __init__(self, db_config: dict):
+        """
+            Initialization of the population details fetcher
+
+            Args:
+                db_config (dict): db configuration
+        """        
         self.db_config = db_config
 
     
     def fetch_population(self) -> list[tuple]:
         """
-            _summary_
+            Fetching population
 
             Args:
-                self.db_config (dict): _description_
+                self.db_config (dict): The db_configuration
 
             Returns:
-                list[tuple]: _description_
+                list[tuple]: Cursor.fetchall list of tuples
         """
         population_sql = """SELECT p.code, p.name, p.description, p.latitude, p.longitude, p.elastic_id, p.display_order,
                             COUNT(DISTINCT sample_id) AS num_samples, sp.code, sp.name, sp.display_colour, 
@@ -46,7 +52,6 @@ class PopulationDetailsFetcher:
 
         Args:
             id (int): Population id from the database
-            data(dict) : Data for the configuration info
 
         Returns:
             list[tuple]: List of tuples from the cursor.fetchall()
@@ -83,7 +88,6 @@ class PopulationDetailsFetcher:
         Args:
             pop_info (dict[str, any]): The population info dictionary we are building
             pop_id (int): pop id which is used to fetch the data collection information for that population
-            data (dict[str, any]): Configuration dictionary which is used in data_collection_details_population
 
         Returns:
             dict: The added information of the data collection details to the population info dictionary we are building
@@ -107,7 +111,6 @@ class PopulationDetailsFetcher:
         Args:
             population_info (dict[str, any]): population info dictionary
             row (tuple): the tuple containing the information we will be using to build
-            data (dict[str, any]): Configuration dictionary
 
         Returns:
             dict[str, any]: Returns the populated information dictionary
@@ -148,7 +151,6 @@ class PopulationDetailsFetcher:
         Args:
             population_info (dict[str, any]): The population information dictionary
             pop_id (int): population id
-            data (dict[str, any]): configuration dictionary required by
 
         Returns:
             dict[str, any]: Population info dictionary with added overlapping population info
@@ -183,7 +185,6 @@ class PopulationDetailsFetcher:
 
         Args:
             pop_id (int): Population id
-            data (dict[str, any]): Configuration dictionary
 
         Returns:
             list[tuple]: Returns from the fetchrow

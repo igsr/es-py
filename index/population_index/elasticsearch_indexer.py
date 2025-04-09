@@ -5,26 +5,27 @@ from elasticsearch.helpers import bulk
 
 class ElasticSearchIndexer:
     def __init__(self, es_host: str, index_name: str):
-        """_summary_
+        """
+            Initialization of the ElasticSearchIndexer Class
 
-        Args:
-            es_host (str): _description_
-            index_name (str): _description_
+            Args:
+                es_host (str): Host of the ElasticSearch
+                index_name (str): name of the index
         """
         self.client = Elasticsearch(es_host)
         self.index_name = index_name
 
     def index_population(self, population_data: dict, doc_id: str, action_type: str):
         """
-        _summary_
+            Creation of the index (required for the action for bulk action)
 
-        Args:
-            population_data (dict): _description_
-            doc_id (str): _description_
-            action_type (str): _description_
+            Args:
+                population_data (dict): Population information
+                doc_id (str): doc_id information
+                action_type (str): action type : create or update
 
-        Returns:
-            _type_: _description_
+            Returns:
+                _type_: _description_
         """
         data_index = {
             "_op_type": action_type,
@@ -36,16 +37,16 @@ class ElasticSearchIndexer:
 
     def bulk_index(self, actions: list):
         """
-        _summary_
+            Bulk indexing
 
-        Args:
-            actions (list): _description_
+            Args:
+                actions (list): list of dictionaries
 
-        Raises:
-            Exception: _description_
+            Raises:
+                Exception: BadRequestError
 
-        Returns:
-            _type_: _description_
+            Returns:
+                _type_: bulk action
         """
         try:
             return bulk(self.client, actions)

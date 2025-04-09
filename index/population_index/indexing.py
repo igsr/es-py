@@ -5,7 +5,19 @@ from config_read import  read_from_config_file
 from population_index.utils import create_the_dictionary_structure
 
 class PopulationIndexer:
+    """
+        Class for Population indexing
+    """    
     def __init__(self, config_file: str, es_host: str, type_of: str):
+        """
+            Initialization of the Population index class
+            Also used to initialize the PopulationDetailsFetcher class and the ElasticSearchIndexer
+
+            Args:
+                config_file (str): Configuration file
+                es_host (str): ElasticSearch Host
+                type_of (str): Type of update, create or update
+        """        
         self.config_file = config_file
         self.es_host = es_host
         self.type_of = type_of
@@ -14,7 +26,12 @@ class PopulationIndexer:
         self.indexer = ElasticSearchIndexer(es_host, "population")
 
     def build_and_index_population_info(self):
-        """Fetches population data and indexes it in Elasticsearch."""
+        """
+            Build the index population
+
+            Returns:
+                _type_: Response from the self.inddexer, which is a bulk response
+        """        
         populations = create_the_dictionary_structure()
         pop_info = self.fetcher.fetch_population()
         actions = []
@@ -36,10 +53,8 @@ class PopulationIndexer:
 @click.option("--es_host", "-es", type=str, help="ElasticSearch host", required=True)
 @click.option("--type_of", "-t", type=str, help="Update or create an index", required=True)
 def create_data(config_file: str, es_host: str, type_of: str):
-    """Command-line function to create data in Elasticsearch."""
     population_indexer = PopulationIndexer(config_file, es_host, type_of)
     result = population_indexer.build_and_index_population_info()
-    print(result)
 
 
 if __name__ == "__main__":
