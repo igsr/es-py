@@ -1,4 +1,6 @@
 from collections import defaultdict
+
+
 def create_the_dictionary_structure() -> dict[str, any]:
     """
     Creation of the dictionary structure for the population

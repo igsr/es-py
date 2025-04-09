@@ -1,23 +1,25 @@
 import click
 from population_index.elasticsearch_indexer import ElasticSearchIndexer
 from population_index.fetch_information_from_db import PopulationDetailsFetcher
-from config_read import  read_from_config_file
+from config_read import read_from_config_file
 from population_index.utils import create_the_dictionary_structure
+
 
 class PopulationIndexer:
     """
-        Class for Population indexing
-    """    
+    Class for Population indexing
+    """
+
     def __init__(self, config_file: str, es_host: str, type_of: str):
         """
-            Initialization of the Population index class
-            Also used to initialize the PopulationDetailsFetcher class and the ElasticSearchIndexer
+        Initialization of the Population index class
+        Also used to initialize the PopulationDetailsFetcher class and the ElasticSearchIndexer
 
-            Args:
-                config_file (str): Configuration file
-                es_host (str): ElasticSearch Host
-                type_of (str): Type of update, create or update
-        """        
+        Args:
+            config_file (str): Configuration file
+            es_host (str): ElasticSearch Host
+            type_of (str): Type of update, create or update
+        """
         self.config_file = config_file
         self.es_host = es_host
         self.type_of = type_of
@@ -27,11 +29,11 @@ class PopulationIndexer:
 
     def build_and_index_population_info(self):
         """
-            Build the index population
+        Build the index population
 
-            Returns:
-                _type_: Response from the self.inddexer, which is a bulk response
-        """        
+        Returns:
+            _type_: Response from the self.inddexer, which is a bulk response
+        """
         populations = create_the_dictionary_structure()
         pop_info = self.fetcher.fetch_population()
         actions = []
@@ -49,9 +51,17 @@ class PopulationIndexer:
 
 
 @click.command()
-@click.option("--config_file", "-c", type=click.Path(exists=True), help="Configuration file", required=True)
+@click.option(
+    "--config_file",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file",
+    required=True,
+)
 @click.option("--es_host", "-es", type=str, help="ElasticSearch host", required=True)
-@click.option("--type_of", "-t", type=str, help="Update or create an index", required=True)
+@click.option(
+    "--type_of", "-t", type=str, help="Update or create an index", required=True
+)
 def create_data(config_file: str, es_host: str, type_of: str):
     population_indexer = PopulationIndexer(config_file, es_host, type_of)
     result = population_indexer.build_and_index_population_info()
@@ -59,4 +69,3 @@ def create_data(config_file: str, es_host: str, type_of: str):
 
 if __name__ == "__main__":
     create_data()
-
