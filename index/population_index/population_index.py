@@ -6,6 +6,7 @@ from collections import defaultdict
 import click
 import mysql.connector
 from elasticsearch.helpers import bulk
+from config_read import read_from_config_file
 
 
 def index_naming() -> str:
@@ -102,6 +103,14 @@ def create_the_dictionary_structure() -> dict[str, any]:
     help="ElasticSearch host"
 )
 def create_data(config_file: str, es_host: str):
+    """
+    Create the index based on what has been built in build_population_info
+
+    Args:
+        config_file (str): Configuration file
+        es_host (str): es host
+
+    """    
     client = Elasticsearch(es_host)
     action = []
     index_name = index_naming()
@@ -123,7 +132,6 @@ def create_data(config_file: str, es_host: str):
         bulk(client, action)
     except elasticsearch.RequestError as e:
         raise(str(e))
-    return action
 
 
 
@@ -314,26 +322,6 @@ def select_overlap_population_details(pop_id: int, data: dict[str, any]) -> list
     return results
 
 
-def read_from_config_file(config_file: str) -> dict[str, any]:
-    """
-    Reads from config file using ConfigParser
-
-    Args:
-        config_file (str): the configuration file
-
-    Returns:
-        dict[str, any]: Data of configuration
-    """
-    data = {}
-    config = ConfigParser()
-    config.read(config_file)
-    data["host"] = config["database"]["host"]
-    data["port"] = config["database"]["port"]
-    data["user"] = config["database"]["user"]
-    data["database"] = config["database"]["name"]
-    data["password"] = config["database"]["password"]
-
-    return data
 
 
 
