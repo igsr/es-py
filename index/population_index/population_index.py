@@ -95,14 +95,24 @@ def create_the_dictionary_structure() -> dict[str, any]:
     "-c",
     type=click.Path(exists=True),
     help="Configuration file only available for database",
+    required=True
 )
 @click.option(
     "--es_host",
-    "--es_host",
+    "-es",
     type=str,
-    help="ElasticSearch host"
+    help="ElasticSearch host",
+    required=True
 )
-def create_data(config_file: str, es_host: str):
+@click.option(
+    "--type_of",
+    "-t",
+    type=str,
+    help="Update or create an index",
+    required=True
+
+)
+def create_data(config_file: str, es_host: str, type_of:str):
     """
     Create the index based on what has been built in build_population_info
 
@@ -119,21 +129,47 @@ def create_data(config_file: str, es_host: str):
     populations = create_the_dictionary_structure()
     for row in pop_info:
         code = row[0]
+        if not code:
+            continue
         build_population_info(populations, row, data)
 
-        data_index = {
-            "_index": index_name,
-            "_id": code,
-            "_source": json.dumps(populations),
-        }
-
+        data_index = which_type(type_of, index_name, code, populations)
+        
         action.append(data_index)
     try:
-        bulk(client, action)
-    except elasticsearch.RequestError as e:
+        index = bulk(client, action)
+        return index
+    except elasticsearch.BadRequestError as e:
         raise(str(e))
 
+def which_type(type_of: str, index_name: str, code: str, populations: dict[str, any]):
+    """_summary_
 
+    Args:
+        type_of (str): _description_
+        index_name (str): _description_
+        code (str): _description_
+        populations (dict[str, any]): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    if type_of == "create":
+        data_index = {
+            '_op_type': 'create',
+            "_index": index_name,
+            "_id": code,
+            "doc": populations,
+        }
+    if type_of == "update":
+        data_index = {
+            '_op_type': 'update',
+            "_index": index_name,
+            "_id": code,
+            "doc": populations,
+        }
+
+    return data_index
 
 def data_collection_details_population(
     pop_id: int, data: dict[str, any]
