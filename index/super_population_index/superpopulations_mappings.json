@@ -1,0 +1,62 @@
+{
+    "superpopulation": {
+        "aliases": {},
+        "mappings": {
+            "properties": {
+                "doc": {
+                    "properties": {
+                        "display_colour": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "display_order": {
+                            "type": "long"
+                        },
+                        "elasticId": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "settings": {
+            "index": {
+                "routing": {
+                    "allocation": {
+                        "include": {
+                            "_tier_preference": "data_content"
+                        }
+                    }
+                },
+                "number_of_shards": "1",
+                "provided_name": "superpopulation",
+                "creation_date": "1744291182450",
+                "number_of_replicas": "1",
+                "uuid": "Ix1Y9vWHScmEH-sdr1tCMA",
+                "version": {
+                    "created": "8512000"
+                }
+            }
+        }
+    }
+}

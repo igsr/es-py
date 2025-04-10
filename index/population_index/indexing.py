@@ -1,5 +1,5 @@
 import click
-from population_index.elasticsearch_indexer import ElasticSearchIndexer
+from elasticsearch_indexer import ElasticSearchIndexer
 from population_index.fetch_information_from_db import PopulationDetailsFetcher
 from config_read import read_from_config_file
 from population_index.utils import create_the_dictionary_structure
@@ -44,7 +44,7 @@ class PopulationIndexer:
                 continue
             # Add logic to build population info from row and populate the population structure
             population_data = self.fetcher.build_population_info(populations, row)
-            action = self.indexer.index_population(population_data, code, self.type_of)
+            action = self.indexer.index_data(population_data, code, self.type_of)
             actions.append(action)
 
         return self.indexer.bulk_index(actions)

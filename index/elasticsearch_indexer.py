@@ -14,8 +14,9 @@ class ElasticSearchIndexer:
         """
         self.client = Elasticsearch(es_host)
         self.index_name = index_name
+    
 
-    def index_population(self, population_data: dict, doc_id: str, action_type: str):
+    def index_data(self, data: dict, doc_id: str, action_type: str):
         """
         Creation of the index (required for the action for bulk action)
 
@@ -31,7 +32,7 @@ class ElasticSearchIndexer:
             "_op_type": action_type,
             "_index": self.index_name,
             "_id": doc_id,
-            "doc": population_data,
+            "doc": data,
         }
         return data_index
 
