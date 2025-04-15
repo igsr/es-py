@@ -10,6 +10,7 @@ class PopulationIndexer:
     Class for Population indexing
     """
 
+    
     def __init__(self, config_file: str, es_host: str, type_of: str):
         """
         Initialization of the Population index class
@@ -27,6 +28,7 @@ class PopulationIndexer:
         self.fetcher = PopulationDetailsFetcher(self.data)
         self.indexer = ElasticSearchIndexer(es_host, "population")
 
+    
     def build_and_index_population_info(self):
         """
         Build the index population
@@ -62,9 +64,12 @@ class PopulationIndexer:
 @click.option(
     "--type_of", "-t", type=str, help="Update or create an index", required=True
 )
+
 def create_data(config_file: str, es_host: str, type_of: str):
     population_indexer = PopulationIndexer(config_file, es_host, type_of)
     result = population_indexer.build_and_index_population_info()
+
+
 
 
 if __name__ == "__main__":

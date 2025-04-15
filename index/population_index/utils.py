@@ -1,9 +1,9 @@
+from typing import Any
 from collections import defaultdict
 
 
-def create_the_dictionary_structure() -> dict[str, any]:
-    """
-    Creation of the dictionary structure for the population
+def create_the_dictionary_structure() -> dict[str, Any]:
+    """Creation of the dictionary structure for the population
 
     Returns:
         _type_: The created dictionary

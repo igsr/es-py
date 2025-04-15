@@ -1,10 +1,27 @@
 from mysql.connector import connect
+from typing import Any
 
 class FetchSPFromDB:
-    def __init__(self, data: dict[str, any]):
+    """Fetching the Superpopulation from Database class
+    """    
+    
+    
+    def __init__(self, data: dict[str, Any]):
+        """Initializes the class
+
+        Args:
+            data (dict[str, Any]): Takes the configuration data
+        """        
         self.data = data
 
-    def fetch_information_from_db(self):
+    
+    
+    def fetch_information_from_db(self) -> dict[str, Any]:
+        """Fetching superpopulation information from DB
+
+        Returns:
+            dict[str, Any] - Return a superpopulation dictionary information from the database
+        """        
 
         # not using code because code is sometimes null
         select_superpop_sql = """SELECT sp.elastic_id, sp.name, sp.display_colour, sp.display_order from superpopulation sp GROUP BY sp.superpopulation_id"""
@@ -38,7 +55,7 @@ class FetchSPFromDB:
         return superpopulation
 
 
-def create_the_dictionary_structure() -> dict[str, any]:
+def create_the_dictionary_structure() -> dict[str, Any]:
     superpopulation = {
         "elasticId" : None, 
         "name": None,

@@ -82,6 +82,175 @@
                 "display_order": {
                     "type": "long"
                 },
+                "doc": {
+                    "properties": {
+                        "code": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "dataCollections": {
+                            "properties": {
+                                "alignment": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "dataReusePolicy": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "dataTypes": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "sequence": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "title": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "variants": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "display_order": {
+                            "type": "long"
+                        },
+                        "elasticId": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "latitude": {
+                            "type": "float"
+                        },
+                        "longitude": {
+                            "type": "float"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "overlappingPopulations": {
+                            "properties": {
+                                "populationDescription": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "populationElasticId": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "sharedSampleCount": {
+                                    "type": "long"
+                                },
+                                "sharedSamples": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "samples": {
+                            "type": "long"
+                        },
+                        "superpopulation": {
+                            "properties": {
+                                "display_color": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                },
+                                "display_order": {
+                                    "type": "long"
+                                },
+                                "name": {
+                                    "type": "text",
+                                    "fields": {
+                                        "keyword": {
+                                            "type": "keyword",
+                                            "ignore_above": 256
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "elasticId": {
                     "type": "text",
                     "fields": {
@@ -145,15 +314,6 @@
                 },
                 "superpopulation": {
                     "properties": {
-                        "code": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
                         "display_color": {
                             "type": "text",
                             "fields": {
@@ -190,9 +350,9 @@
                 },
                 "number_of_shards": "1",
                 "provided_name": "population",
-                "creation_date": "1744200956196",
+                "creation_date": "1744219231753",
                 "number_of_replicas": "1",
-                "uuid": "yB-RwiHpRZSIsa_hrg0zMQ",
+                "uuid": "ZA4WDoHKQBKOya73SHb63A",
                 "version": {
                     "created": "8512000"
                 }

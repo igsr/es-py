@@ -5,8 +5,17 @@ from config_read import read_from_config_file
 
 
 class SuperPopulationIndexer:
+    """Class for the Superpopulation Indexer
+    """    
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
+        """Initializes the Superpopulation Indexer class
+
+        Args:
+            config_file (str): Configuration file
+            es_host (str): ElasticSearch Host
+            type_of (str): _description_
+        """        
         self.config_file = config_file
         self.es_host = es_host
         self.type_of = type_of
@@ -16,6 +25,8 @@ class SuperPopulationIndexer:
 
     
     def build_and_index_superpopulation(self):
+        """Builds and indexes the superpopulation index
+        """        
         actions = []
         superpopulation = self.fetcher.fetch_information_from_db()
         for row in superpopulation:
@@ -24,7 +35,7 @@ class SuperPopulationIndexer:
             action = self.indexer.index_data(super_pop_data, elasticId, self.type_of)
             actions.append(action)
         
-        return self.indexer.bulk_index(actions)
+        self.indexer.bulk_index(actions)
 
 
 @click.command()

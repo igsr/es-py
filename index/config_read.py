@@ -1,8 +1,7 @@
 from configparser import ConfigParser
 
 def read_from_config_file(config_file: str) -> dict[str, any]:
-    """
-    Reads from config file using ConfigParser
+    """Reads from config file using ConfigParser
 
     Args:
         config_file (str): the configuration file

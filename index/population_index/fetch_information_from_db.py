@@ -1,19 +1,21 @@
 import mysql.connector
+from typing import Any
 
 
 class PopulationDetailsFetcher:
+    
+    
     def __init__(self, db_config: dict):
-        """
-        Initialization of the population details fetcher
+        """Initialization of the population details fetcher
 
         Args:
             db_config (dict): db configuration
         """
         self.db_config = db_config
 
+    
     def fetch_population(self) -> list[tuple]:
-        """
-        Fetching population
+        """Fetching population
 
         Args:
             self.db_config (dict): The db_configuration
@@ -42,12 +44,12 @@ class PopulationDetailsFetcher:
 
         return population
 
+    
     def data_collection_details_population(
         self,
         pop_id: int,
     ) -> list[tuple]:
-        """
-        Fetches all the data collection information of a population based on the population_id
+        """Fetches all the data collection information of a population based on the population_id
         Basically any collection where the population can be found
 
         Args:
@@ -79,14 +81,14 @@ class PopulationDetailsFetcher:
 
         return file_info
 
+    
     def add_data_collection_details(
-        self, pop_info: dict[str, any], pop_id: int
-    ) -> dict[str, any]:
-        """
-        Adds the data collection details to the build pop_info dictionary
+        self, pop_info: dict[str, Any], pop_id: int
+    ) -> dict[str, Any]:
+        """Adds the data collection details to the build pop_info dictionary
 
         Args:
-            pop_info (dict[str, any]): The population info dictionary we are building
+            pop_info (dict[str, Any]): The population info dictionary we are building
             pop_id (int): pop id which is used to fetch the data collection information for that population
 
         Returns:
@@ -102,18 +104,18 @@ class PopulationDetailsFetcher:
 
         return pop_info
 
+    
     def build_population_info(
-        self, population_info: dict[str, any], row: tuple
-    ) -> dict[str, any]:
-        """
-        Builds the population information dictionary
+        self, population_info: dict[str, Any], row: tuple
+    ) -> dict[str, Any]:
+        """Builds the population information dictionary
 
         Args:
-            population_info (dict[str, any]): population info dictionary
+            population_info (dict[str, Any]): population info dictionary
             row (tuple): the tuple containing the information we will be using to build
 
         Returns:
-            dict[str, any]: Returns the populated information dictionary
+            dict[str, Any]: Returns the populated information dictionary
         """
         population_info.update(
             {
@@ -142,18 +144,18 @@ class PopulationDetailsFetcher:
 
         return population_info
 
+    
     def add_overlap_population_info(
-        self, population_info: dict[str, any], pop_id: int
-    ) -> dict[str, any]:
-        """
-        Adds the overlapping population details
+        self, population_info: dict[str, Any], pop_id: int
+    ) -> dict[str, Any]:
+        """Adds the overlapping population details
 
         Args:
-            population_info (dict[str, any]): The population information dictionary
+            population_info (dict[str, Any]): The population information dictionary
             pop_id (int): population id
 
         Returns:
-            dict[str, any]: Population info dictionary with added overlapping population info
+            dict[str, Any]: Population info dictionary with added overlapping population info
         """
 
         for pop in self.select_overlap_population_details(pop_id):
@@ -177,9 +179,9 @@ class PopulationDetailsFetcher:
 
         return population_info
 
+    
     def select_overlap_population_details(self, pop_id: int) -> list[tuple]:
-        """
-        Select the overlap population details from the sql
+        """Select the overlap population details from the sql
 
         Args:
             pop_id (int): Population id
