@@ -1,0 +1,62 @@
+{
+    "analysis_group": {
+        "aliases": {},
+        "mappings": {
+            "properties": {
+                "doc": {
+                    "properties": {
+                        "code": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "displayOrder": {
+                            "type": "long"
+                        },
+                        "shortTitle": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "settings": {
+            "index": {
+                "routing": {
+                    "allocation": {
+                        "include": {
+                            "_tier_preference": "data_content"
+                        }
+                    }
+                },
+                "number_of_shards": "1",
+                "provided_name": "analysis_group",
+                "creation_date": "1744793158872",
+                "number_of_replicas": "1",
+                "uuid": "M3IEAg2ERVuMQwYdoGTWiA",
+                "version": {
+                    "created": "8512000"
+                }
+            }
+        }
+    }
+}
