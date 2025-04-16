@@ -16,8 +16,8 @@ class SuperPopulationIndexer:
             es_host (str): ElasticSearch Host
             type_of (str): _description_
         """        
-        self.config_file = config_file
-        self.es_host = es_host
+
+        
         self.type_of = type_of
         self.data = read_from_config_file(config_file)
         self.fetcher = FetchSPFromDB(self.data)

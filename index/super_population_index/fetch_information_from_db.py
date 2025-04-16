@@ -16,7 +16,7 @@ class FetchSPFromDB:
 
     
     
-    def fetch_information_from_db(self) -> dict[str, Any]:
+    def fetch_information_from_db(self) -> tuple:
         """Fetching superpopulation information from DB
 
         Returns:
@@ -36,8 +36,9 @@ class FetchSPFromDB:
         cursor = db.cursor()
         cursor.execute(select_superpop_sql)
         superpopulation = cursor.fetchall()
+        cursor.close()
         db.close()
-        cursor.close
+        
 
         return superpopulation
 
