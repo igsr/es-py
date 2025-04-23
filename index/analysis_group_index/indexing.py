@@ -1,13 +1,11 @@
-import click 
+import click
 from elasticsearch_indexer import ElasticSearchIndexer
 from .fetch_ag_from_db import FetchAGFromDB
 from config_read import read_from_config_file
 
 
-
 class AnalysisGroupIndexer:
-    """_summary_
-    """    
+    """_summary_"""
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
         """_summary_
@@ -23,10 +21,8 @@ class AnalysisGroupIndexer:
         self.fetcher = FetchAGFromDB(self.data)
         self.indexer = ElasticSearchIndexer(es_host, "analysis_group")
 
-
     def build_and_index_analysisgroup(self):
-        """_summary_
-        """        
+        """_summary_"""
 
         actions = []
         analysis_group = self.fetcher.fetch_information_from_DB()
@@ -36,14 +32,21 @@ class AnalysisGroupIndexer:
             action = self.indexer.index_data(ag_data, code, self.type_of)
             actions.append(action)
 
-        self.indexer.bulk_index(actions)     
+        self.indexer.bulk_index(actions)
 
 
 @click.command()
-@click.option("--config_file", "-c", type=click.Path(exists=True), help="Configuration file", required=True)
+@click.option(
+    "--config_file",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file",
+    required=True,
+)
 @click.option("--es_host", "-es", type=str, help="ElasticSearch host", required=True)
-@click.option("--type_of", "-t", type=str, help="Update or create an index", required=True)
-
+@click.option(
+    "--type_of", "-t", type=str, help="Update or create an index", required=True
+)
 def create_data(config_file: str, es_host: str, type_of: str):
     ag_indexer = AnalysisGroupIndexer(config_file, es_host, type_of)
     ag_indexer.build_and_index_analysisgroup()

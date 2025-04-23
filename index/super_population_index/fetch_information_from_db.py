@@ -1,27 +1,24 @@
 from mysql.connector import connect
 from typing import Any
 
+
 class FetchSPFromDB:
-    """Fetching the Superpopulation from Database class
-    """    
-    
-    
+    """Fetching the Superpopulation from Database class"""
+
     def __init__(self, data: dict[str, Any]):
         """Initializes the class
 
         Args:
             data (dict[str, Any]): Takes the configuration data
-        """        
+        """
         self.data = data
 
-    
-    
-    def fetch_information_from_db(self) -> tuple:
+    def fetch_information_from_db(self) -> list(tuple):
         """Fetching superpopulation information from DB
 
         Returns:
-            dict[str, Any] - Return a superpopulation dictionary information from the database
-        """        
+            list(tuple) - Returns a list of tuples from the database
+        """
 
         # not using code because code is sometimes null
         select_superpop_sql = """SELECT sp.elastic_id, sp.name, sp.display_colour, sp.display_order from superpopulation sp GROUP BY sp.superpopulation_id"""
@@ -32,24 +29,25 @@ class FetchSPFromDB:
         password = self.data["password"]
         user = self.data["user"]
 
-        db = connect(host=host, port=port, user=user, password=password, database=database)
+        db = connect(
+            host=host, port=port, user=user, password=password, database=database
+        )
         cursor = db.cursor()
         cursor.execute(select_superpop_sql)
         superpopulation = cursor.fetchall()
         cursor.close()
         db.close()
-        
 
         return superpopulation
 
     def build_superpopulation_info(self, row: tuple):
-
         superpopulation = create_the_dictionary_structure()
         superpopulation.update(
-            {"elasticId" : row[0],
-             "name": row[1],
-             "display_colour": row[2],
-             "display_order": row[3]
+            {
+                "elasticId": row[0],
+                "name": row[1],
+                "display_colour": row[2],
+                "display_order": row[3],
             }
         )
 
@@ -58,13 +56,10 @@ class FetchSPFromDB:
 
 def create_the_dictionary_structure() -> dict[str, Any]:
     superpopulation = {
-        "elasticId" : None, 
+        "elasticId": None,
         "name": None,
         "display_colour": None,
-        "display_order": None
+        "display_order": None,
     }
 
     return superpopulation
-
-
-

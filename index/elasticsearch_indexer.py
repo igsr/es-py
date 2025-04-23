@@ -4,10 +4,8 @@ from elasticsearch.helpers import bulk
 
 
 class ElasticSearchIndexer:
-    """Configuration for the ElasticSearch Index build
-    """    
-    
-    
+    """Configuration for the ElasticSearch Index build"""
+
     def __init__(self, es_host: str, index_name: str):
         """Initialization of the ElasticSearchIndexer Class
 
@@ -17,7 +15,6 @@ class ElasticSearchIndexer:
         """
         self.client = Elasticsearch(es_host)
         self.index_name = index_name
-    
 
     def index_data(self, data: dict, doc_id: str, action_type: str):
         """Creation of the index (required for the action for bulk action)
@@ -38,7 +35,6 @@ class ElasticSearchIndexer:
         }
         return data_index
 
-    
     def bulk_index(self, actions: list):
         """Bulk indexing
 

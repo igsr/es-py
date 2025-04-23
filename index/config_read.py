@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 
+
 def read_from_config_file(config_file: str) -> dict[str, any]:
     """Reads from config file using ConfigParser
 
@@ -19,4 +20,3 @@ def read_from_config_file(config_file: str) -> dict[str, any]:
     data["password"] = config["database"]["password"]
 
     return data
-

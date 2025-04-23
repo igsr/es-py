@@ -3,8 +3,6 @@ from typing import Any
 
 
 class PopulationDetailsFetcher:
-    
-    
     def __init__(self, db_config: dict):
         """Initialization of the population details fetcher
 
@@ -13,7 +11,6 @@ class PopulationDetailsFetcher:
         """
         self.db_config = db_config
 
-    
     def fetch_population(self) -> list[tuple]:
         """Fetching population
 
@@ -44,7 +41,6 @@ class PopulationDetailsFetcher:
 
         return population
 
-    
     def data_collection_details_population(
         self,
         pop_id: int,
@@ -81,7 +77,6 @@ class PopulationDetailsFetcher:
 
         return file_info
 
-    
     def add_data_collection_details(
         self, pop_info: dict[str, Any], pop_id: int
     ) -> dict[str, Any]:
@@ -104,7 +99,6 @@ class PopulationDetailsFetcher:
 
         return pop_info
 
-    
     def build_population_info(
         self, population_info: dict[str, Any], row: tuple
     ) -> dict[str, Any]:
@@ -144,7 +138,6 @@ class PopulationDetailsFetcher:
 
         return population_info
 
-    
     def add_overlap_population_info(
         self, population_info: dict[str, Any], pop_id: int
     ) -> dict[str, Any]:
@@ -179,7 +172,6 @@ class PopulationDetailsFetcher:
 
         return population_info
 
-    
     def select_overlap_population_details(self, pop_id: int) -> list[tuple]:
         """Select the overlap population details from the sql
 
