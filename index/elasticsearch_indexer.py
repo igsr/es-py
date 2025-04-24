@@ -48,6 +48,6 @@ class ElasticSearchIndexer:
             _type_: bulk action
         """
         try:
-            return bulk(self.client, actions)
+            bulk(self.client, actions)
         except elasticsearch.BadRequestError as e:
             raise Exception(f"Error during bulk indexing: {str(e)}")
