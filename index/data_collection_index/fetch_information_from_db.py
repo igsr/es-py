@@ -151,6 +151,14 @@ class DCDetailsFetcher:
 
 
     def fetch_analysis_information(self, dc_id) -> list[tuple]:
+        """_summary_
+
+        Args:
+            dc_id (_type_): _description_
+
+        Returns:
+            list[tuple]: _description_
+        """        
         analysis_info_sql = """SELECT dt.code data_type, ag.description analysis_group
             FROM file f LEFT JOIN data_type dt ON f.data_type_id = dt.data_type_id
             LEFT JOIN analysis_group ag ON f.analysis_group_id = ag.analysis_group_id
@@ -174,8 +182,16 @@ class DCDetailsFetcher:
 
         return analysis_info
 
-    
+
     def populate_the_dictionary_structure(self, row):
+        """_summary_
+
+        Args:
+            row (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """        
         dc_data = create_the_dictionary_structure()
         dc_data.update(
             {
