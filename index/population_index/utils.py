@@ -6,7 +6,7 @@ def create_the_dictionary_structure() -> dict[str, Any]:
     """Creation of the dictionary structure for the population
 
     Returns:
-        _type_: The created dictionary
+        dict[str, Any]: The created dictionary
     """
     population_info = defaultdict(
         lambda: {
