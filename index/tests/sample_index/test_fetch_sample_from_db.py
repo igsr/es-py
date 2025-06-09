@@ -60,3 +60,34 @@ def test_fetch_source_samples(mocker, fetcher):
     assert len(result) == 1
     assert result[0][1] == "test_source"
     assert result[0][2] == "test source description"
+
+
+def test_fetch_population_samples(mocker, fetcher):
+    mock_cursor = MagicMock()
+    mock_cursor.fetchall.return_value = [
+        (
+            1,
+            "GBR",
+            "Great Britian",
+            "Britain",
+            "Britain, Scotland and Ireland",
+            None,
+            None,
+            "BR",
+            2,
+            "SUPERGBR",
+            "Super GBR",
+            None,
+            1,
+        )
+    ]
+
+    mock_db = MagicMock()
+    mock_db.cursor.return_value = mock_cursor
+    mocker.patch(
+        "index.sample_index.fetch_samples_from_db.connect", return_value=mock_db
+    )
+
+    result = fetcher.fetch_population_samples(1)
+    assert result[0][1] == "GBR"
+    assert result[0][6] == None
