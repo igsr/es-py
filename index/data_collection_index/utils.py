@@ -3,6 +3,11 @@ from typing import Any
 
 
 def create_the_dictionary_structure() -> dict[str, Any]:
+    """Creating the dataCollections dictionary structure
+
+    Returns:
+        dict[str, Any]: The initialized dictionary
+    """    
     datacollections_info = defaultdict(
         lambda: {
             "code": None,

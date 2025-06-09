@@ -5,16 +5,16 @@ from config_read import read_from_config_file
 from elasticsearch.helpers import BulkIndexError
 
 class DataCollectionsIndexer:
-    """_summary_
+    """DataCollectionsIndexer class
     """
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
-        """_summary_
+        """Initialization of the DataCollectionsIndexer
 
         Args:
-            config_file (str): _description_
-            es_host (str): _description_
-            type_of (str): _description_
+            config_file (str): Configuration file
+            es_host (str): ElasticSearch Host
+            type_of (str): Type of: create or update
         """
 
         self.type_of = type_of
@@ -24,7 +24,7 @@ class DataCollectionsIndexer:
 
 
     def build_and_index_datacollections(self):
-        """_summary_
+        """Build and index dataCollections
         """
         actions = []
         data_collection = self.fetcher.fetch_datacollections()

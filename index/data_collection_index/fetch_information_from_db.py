@@ -1,18 +1,18 @@
 from mysql.connector import connect
 from data_collection_index.utils import create_the_dictionary_structure
 from config_read import read_from_config_file
-
+from typing import Any
 
 class DCDetailsFetcher:
-    """_summary_
+    """DataCollectionDetails Fetcher class
     """    
 
     
     def __init__(self, db_config: dict):
-        """_summary_
+        """Initialization of the DCDetailsFetcher clasd
 
         Args:
-            db_config (dict): _description_
+            db_config (dict): DB configuration
         """
         self.host = db_config["host"]
         self.port = db_config["port"]
@@ -22,10 +22,10 @@ class DCDetailsFetcher:
 
 
     def fetch_datacollections(self) -> list[tuple]:
-        """_summary_
+        """Fetch dataCollections from the database
 
         Returns:
-            list[tuple]: _description_
+            list[tuple]: List of rows from the database
         """
 
         select_all_dc_sql = (
@@ -49,13 +49,13 @@ class DCDetailsFetcher:
 
 
     def fetch_samples_count(self, dc_id: int) -> int:
-        """_summary_
+        """Fetching samples count from the database
 
         Args:
-            dc_id (int): _description_
+            dc_id (int): Datacollection id 
 
         Returns:
-            int: _description_
+            int: The sample count 
         """
 
         select_samples_count = """ SELECT count(samples.sample_id) AS num_samples
@@ -82,13 +82,13 @@ class DCDetailsFetcher:
 
 
     def fetch_population_count(self, dc_id: int) -> int:
-        """_summary_
+        """Fetch population count from the database
 
         Args:
-            dc_id (int): _description_
+            dc_id (int): Datacollection id
 
         Returns:
-            int: _description_
+            int: The population count
         """
 
         select_population_count = """ SELECT count(*) AS num_populations
@@ -122,13 +122,13 @@ class DCDetailsFetcher:
 
 
     def fetch_publication_info(self, dc_id: int) -> list[tuple]:
-        """_summary_
+        """Fetches publication from the database for each datacollection id 
 
         Args:
-            dc_id (int): _description_
+            dc_id (int): Datacollection id 
 
         Returns:
-            list[tuple]: _description_
+            list[tuple]: List of rows of information from the database
         """
 
         publication_info_sql = """Select * from publications where data_collection_id=%s and publication is NOT NULL"""
@@ -151,13 +151,13 @@ class DCDetailsFetcher:
 
 
     def fetch_analysis_information(self, dc_id) -> list[tuple]:
-        """_summary_
+        """Fetches Analysis group information from the database
 
         Args:
-            dc_id (_type_): _description_
+            dc_id (_type_): Data collection id 
 
         Returns:
-            list[tuple]: _description_
+            list[tuple]: List of rows of information from the database
         """        
         analysis_info_sql = """SELECT dt.code data_type, ag.description analysis_group
             FROM file f LEFT JOIN data_type dt ON f.data_type_id = dt.data_type_id
@@ -183,14 +183,14 @@ class DCDetailsFetcher:
         return analysis_info
 
 
-    def populate_the_dictionary_structure(self, row):
-        """_summary_
+    def populate_the_dictionary_structure(self, row: tuple) -> dict[str, Any]:
+        """Populating the dataCollection dictionary
 
         Args:
-            row (_type_): _description_
+            row (tuple): The row containing info from the fetch_datacollections 
 
         Returns:
-            _type_: _description_
+            dict[str, Any]: Updated dictionary
         """        
         dc_data = create_the_dictionary_structure()
         dc_data.update(
