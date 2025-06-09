@@ -5,15 +5,15 @@ from config_read import read_from_config_file
 
 
 class AnalysisGroupIndexer:
-    """_summary_"""
+    """Analysis group indexer class"""
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
-        """_summary_
+        """Initiaization of the analysis group indexer class
 
         Args:
-            config_file (str): _description_
-            es_host (str): _description_
-            type_of (str): _description_
+            config_file (str): Configuration file
+            es_host (str): ElasticSearch Host
+            type_of (str): Type of either create or update
         """
 
         self.type_of = type_of
@@ -22,7 +22,7 @@ class AnalysisGroupIndexer:
         self.indexer = ElasticSearchIndexer(es_host, "analysis_group")
 
     def build_and_index_analysisgroup(self):
-        """_summary_"""
+        """Build and index analysis group"""
 
         actions = []
         analysis_group = self.fetcher.fetch_information_from_DB()

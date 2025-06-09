@@ -3,21 +3,21 @@ from typing import Any
 
 
 class FetchAGFromDB:
-    """_summary_"""
+    """Fetch Analysis Group from DB class"""
 
     def __init__(self, data: dict[str, Any]):
-        """_summary_
+        """Initialization of the class
 
         Args:
-            data (dict[str, Any]): _description_
+            data (dict[str, Any]): Configuration Data
         """
         self.data = data
 
-    def fetch_information_from_DB(self) -> tuple:
-        """_summary_
+    def fetch_information_from_DB(self) -> list[tuple]:
+        """Fetch analysis group information from database
 
         Returns:
-            tuple: _description_
+            list[tuple]: Rows of information from the database 
         """
 
         fetch_ag_sql = """SELECT ag.* from file f INNER JOIN analysis_group ag ON f.analysis_group_id = ag.analysis_group_id INNER JOIN sample_file sf on sf.file_id = f.file_id GROUP BY ag.analysis_group_id"""
@@ -40,13 +40,13 @@ class FetchAGFromDB:
         return ag
 
     def build_ag_info(self, row: tuple) -> dict[str, Any]:
-        """_summary_
+        """Build analysis group information 
 
         Args:
-            row (tuple): _description_
+            row (tuple): Row, containing the information from the database
 
         Returns:
-            dict[str, Any]: _description_
+            dict[str, Any]: Updated dictionary containing the analysis group information
         """
 
         analysis_group = create_the_dictionary_structure()
@@ -65,10 +65,10 @@ class FetchAGFromDB:
 
 
 def create_the_dictionary_structure() -> dict[str, Any]:
-    """_summary_
+    """Creates the dictionary structure for the analysis group
 
     Returns:
-        dict[str, Any]: _description_
+        dict[str, Any]: An initialized dictionary
     """
 
     analysis_group = {
