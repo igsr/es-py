@@ -91,3 +91,20 @@ def test_fetch_population_samples(mocker, fetcher):
     result = fetcher.fetch_population_samples(1)
     assert result[0][1] == "GBR"
     assert result[0][6] == None
+
+
+def test_fetch_dataCollections_samples(mocker, fetcher):
+    mock_cursor = MagicMock()
+    mock_cursor.fetchall.return_value = [
+        ("test_igsr", "test pacbio sequence", "test igsr", 1, None)
+    ]
+
+    mock_db = MagicMock()
+    mock_db.cursor.return_value = mock_cursor
+    mocker.patch(
+        "index.sample_index.fetch_samples_from_db.connect", return_value=mock_db
+    )
+    result = fetcher.fetch_dataCollections_samples(1)
+
+    assert result[0][0] == "test_igsr"
+    assert result[0][4] == None
