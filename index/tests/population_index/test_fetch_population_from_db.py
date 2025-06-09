@@ -1,10 +1,17 @@
 import pytest
 from unittest.mock import MagicMock
 from index.population_index.fetch_information_from_db import PopulationDetailsFetcher
+from typing import Any
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def db_config():
+def db_config() -> dict[str, Any]:
+    """DB configuration
+
+    Returns:
+        dict: Dictionary containing the test db configuration
+    """
     return {
         "host": "localhost",
         "port": 3306,
@@ -15,11 +22,25 @@ def db_config():
 
 
 @pytest.fixture
-def fetcher(db_config):
+def fetcher(db_config: dict[str, Any]) -> PopulationDetailsFetcher:
+    """The fetcher fixture
+
+    Args:
+        db_config (dict): DB configuration
+
+    Returns:
+        PopulationDetailsFetcher: A class
+    """
     return PopulationDetailsFetcher(db_config)
 
 
-def test_fetch_population(mocker, fetcher):
+def test_fetch_population(mocker: MockerFixture, fetcher: PopulationDetailsFetcher):
+    """Test the fetch population from the PopulationDetailsFetcher class
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
         (
@@ -47,7 +68,15 @@ def test_fetch_population(mocker, fetcher):
     assert result[0][0] == "code1"
 
 
-def test_data_collection_details_population(mocker, fetcher):
+def test_data_collection_details_population(
+    mocker: MockerFixture, fetcher: PopulationDetailsFetcher
+):
+    """Test the fetch data collection population from the PopulationDetailsFetcher class
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [("type1", "group1", "title1", 123, "open")]
     mock_db = MagicMock()
@@ -58,7 +87,15 @@ def test_data_collection_details_population(mocker, fetcher):
     assert result[0][0] == "type1"
 
 
-def test_add_data_collection_details(mocker, fetcher):
+def test_add_data_collection_details(
+    mocker: MockerFixture, fetcher: PopulationDetailsFetcher
+):
+    """Test to check add_data_collection_details from PopulationDetailsFetcher
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     mocker.patch.object(
         fetcher,
         "data_collection_details_population",
@@ -70,7 +107,15 @@ def test_add_data_collection_details(mocker, fetcher):
     assert "group1" in result["dataCollections"]["type1"]
 
 
-def test_build_population_info(mocker, fetcher):
+def test_build_population_info(
+    mocker: MockerFixture, fetcher: PopulationDetailsFetcher
+):
+    """Test for the PopulationDetailsFetcher build_population_info
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     row = (
         "code",
         "name",
@@ -97,7 +142,15 @@ def test_build_population_info(mocker, fetcher):
     assert result["name"] == "name"
 
 
-def test_add_overlap_population_info(mocker, fetcher):
+def test_add_overlap_population_info(
+    mocker: MockerFixture, fetcher: PopulationDetailsFetcher
+):
+    """Test for the PopulationDetailsFetcher add_overlap_population_info
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     mocker.patch.object(
         fetcher,
         "select_overlap_population_details",
@@ -115,7 +168,15 @@ def test_add_overlap_population_info(mocker, fetcher):
     assert result["overlappingPopulations"]["sharedSampleCount"] == 1
 
 
-def test_select_overlap_population_details(mocker, fetcher):
+def test_select_overlap_population_details(
+    mocker: MockerFixture, fetcher: PopulationDetailsFetcher
+):
+    """Test for the PopulationDetailsFetcher select_overlap_population
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (PopulationDetailsFetcher): PopulationDetailsFetcher class
+    """
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
         {
