@@ -6,7 +6,7 @@ from config_read import read_from_config_file
 
 
 class FileIndexer:
-    """_summary_"""
+    """FileIndexer class"""
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
         """Initializing of the Sample Indexer class
