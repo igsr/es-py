@@ -14,18 +14,6 @@ def db_config():
     }
 
 
-# @pytest.fixture
-# def mock_dict_structure():
-#     return {
-#         "biosampleId": None,
-#         "sex": None,
-#         "name": None,
-#         "source": [],
-#         "populations": [],
-#         "dataCollections": []
-#     }
-
-
 @pytest.fixture
 def fetcher(db_config):
     return SampleDetailsFetcher(db_config)
@@ -108,3 +96,4 @@ def test_fetch_dataCollections_samples(mocker, fetcher):
 
     assert result[0][0] == "test_igsr"
     assert result[0][4] == None
+
