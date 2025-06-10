@@ -40,7 +40,15 @@ class FetchSPFromDB:
 
         return superpopulation
 
-    def build_superpopulation_info(self, row: tuple):
+    def build_superpopulation_info(self, row: tuple) -> dict[str, Any]:
+        """Build superpopulation dictionary
+
+        Args:
+            row (tuple): Information from the DB
+
+        Returns:
+            dict[str, Any]: Updated dictionary
+        """        
         superpopulation = create_the_dictionary_structure()
         superpopulation.update(
             {
@@ -55,6 +63,11 @@ class FetchSPFromDB:
 
 
 def create_the_dictionary_structure() -> dict[str, Any]:
+    """Create the dictionary structure
+
+    Returns:
+        dict[str, Any]: New dictionary
+    """    
     superpopulation = {
         "elasticId": None,
         "name": None,
