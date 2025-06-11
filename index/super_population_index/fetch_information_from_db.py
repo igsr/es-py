@@ -13,7 +13,7 @@ class FetchSPFromDB:
         """
         self.data = data
 
-    def fetch_information_from_db(self) -> list(tuple):
+    def fetch_information_from_db(self) -> list[tuple]:
         """Fetching superpopulation information from DB
 
         Returns:
