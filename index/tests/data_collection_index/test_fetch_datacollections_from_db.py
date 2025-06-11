@@ -7,10 +7,10 @@ from pytest_mock import MockerFixture
 
 @pytest.fixture
 def db_config()-> dict[str, Any]:
-    """_summary_
+    """Fixture for DB Configuration
 
     Returns:
-        dict[str, Any]: _description_
+        dict[str, Any]: Dictionary configuration
     """    
     return {
         "host": "localhost",
@@ -23,22 +23,22 @@ def db_config()-> dict[str, Any]:
 
 @pytest.fixture
 def fetcher(db_config: dict[str, Any]) -> DCDetailsFetcher:
-    """_summary_
+    """Fixture for Fetcher
 
     Args:
-        db_config (dict[str, Any]): _description_
+        db_config (dict[str, Any]): Dictionary configuration
 
     Returns:
-        DCDetailsFetcher: _description_
+        DCDetailsFetcher: DCDetailsFetcher class
     """    
     return DCDetailsFetcher(db_config)
 
 def test_fetch_datacollections(mocker: MockerFixture, fetcher: DCDetailsFetcher):
-    """_summary_
+    """Test For DCDetailsFetcher - fetch_datacollections
 
     Args:
-        mocker (MockerFixture): _description_
-        fetcher (DCDetailsFetcher): _description_
+        mocker (MockerFixture): MockerFixture
+        fetcher (DCDetailsFetcher): DCDetailsFetcher
     """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [(
@@ -64,11 +64,11 @@ def test_fetch_datacollections(mocker: MockerFixture, fetcher: DCDetailsFetcher)
 
 
 def test_fetch_publication_info(mocker: MockerFixture, fetcher:DCDetailsFetcher):
-    """_summary_
+    """Test for DCDetailsFetcher - fetch_publication_info
 
     Args:
-        mocker (MockerFixture): _description_
-        fetcher (DCDetailsFetcher): _description_
+        mocker (MockerFixture): MockerFixture
+        fetcher (DCDetailsFetcher): DCDetailsFetcher
     """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
@@ -85,11 +85,11 @@ def test_fetch_publication_info(mocker: MockerFixture, fetcher:DCDetailsFetcher)
 
 
 def test_fetch_analysis_information(mocker: MockerFixture, fetcher:DCDetailsFetcher):
-    """_summary_
+    """Test for DCDetailsFetcher - fetch_analysis_information
 
     Args:
-        mocker (MockerFixture): _description_
-        fetcher (DCDetailsFetcher): _description_
+        mocker (MockerFixture): MockerFixture
+        fetcher (DCDetailsFetcher): DCDetailsFetcher
     """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
@@ -111,11 +111,11 @@ def test_fetch_analysis_information(mocker: MockerFixture, fetcher:DCDetailsFetc
 
 
 def test_populate_the_dictionary_structure(mocker: MockerFixture, fetcher: DCDetailsFetcher):
-    """_summary_
+    """Test for DCDetailsFetcher - populate_the_dictionary_structure
 
     Args:
-        mocker (MockerFixture): _description_
-        fetcher (DCDetailsFetcher): _description_
+        mocker (MockerFixture): MockerFixture
+        fetcher (DCDetailsFetcher): DCDetailsFetcher
     """    
     row = (
         1,
