@@ -34,7 +34,7 @@ def fetcher(db_config: dict[str, Any]) -> FetchAGFromDB:
     return FetchAGFromDB(db_config)
 
 
-def test_fetch_information_from_db(mocker: MockerFixture, fetcher: FetchAGFromDB):
+def test_fetch_information_from_db(mocker, fetcher: FetchAGFromDB):
     """Test for fetching information from DB
 
     Args:
