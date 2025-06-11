@@ -7,6 +7,13 @@ from index.population_index.utils import create_the_dictionary_structure
 
 class PopulationIndexer:
     def __init__(self, config_file: str, es_host: str, type_of: str):
+        """Initialization of the class
+
+        Args:
+            config_file (str): Configuration file 
+            es_host (str): ElasticSearch Host
+            type_of (str): Type of 
+        """        
         self.config_file = config_file
         self.es_host = es_host
         self.type_of = type_of
@@ -15,6 +22,8 @@ class PopulationIndexer:
         self.indexer = ElasticSearchIndexer(es_host, "population")
 
     def build_and_index_population_info(self):
+        """Build and index population info
+        """        
         populations = create_the_dictionary_structure()
         pop_info = self.fetcher.fetch_population()
         actions = []
@@ -27,7 +36,7 @@ class PopulationIndexer:
             action = self.indexer.index_data(population_data, code, self.type_of)
             actions.append(action)
 
-        return self.indexer.bulk_index(actions)
+        self.indexer.bulk_index(actions)
 
 
 @click.command()
