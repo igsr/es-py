@@ -2,9 +2,15 @@ import pytest
 from unittest.mock import MagicMock, patch
 from index.super_population_index.fetch_information_from_db import FetchSPFromDB
 from pytest_mock import MockerFixture
+from typing import Any
 
 @pytest.fixture
-def db_config():
+def db_config() -> dict[str, Any]:
+    """DB configuration
+
+    Returns:
+        dict: Dictionary containing the test db configuration
+    """
     return {
         "host": "localhost",
         "port": 3306,
@@ -15,16 +21,24 @@ def db_config():
 
 
 @pytest.fixture
-def fetcher(db_config):
+def fetcher(db_config: dict[str, Any])-> FetchSPFromDB:
+    """The fetcher fixture
+
+    Args:
+        db_config (dict): DB configuration
+
+    Returns:
+        FetchSPFromDB:  A class
+    """    
     return FetchSPFromDB(db_config)
 
 
 def test_fetch_information_from_db(mocker: MockerFixture, fetcher:FetchSPFromDB):
-    """_summary_
+    """Test for FetchSPFromDB - fetch_information_from_DB
 
     Args:
-        mocker (MockerFixture): _description_
-        fetcher (FetchSPFromDB): _description_
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (FetchSPFromDB): FetchSPFromDB class
     """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
@@ -43,6 +57,12 @@ def test_fetch_information_from_db(mocker: MockerFixture, fetcher:FetchSPFromDB)
 
 
 def test_build_superpopulation_info(mocker: MockerFixture, fetcher: FetchSPFromDB):
+    """Test for FetchSPFromDB - build_superpopulation_info
+
+    Args:
+        mocker (MockerFixture): Mocker from the Pytest_mock:MockerFixture
+        fetcher (FetchSPFromDB): FetchSPFromDB class
+    """    
     row = ("TEST", "Test ancestry", None, None)
 
     result = fetcher.build_superpopulation_info(row)

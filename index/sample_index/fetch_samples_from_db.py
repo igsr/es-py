@@ -1,6 +1,6 @@
 from mysql.connector import connect
 from typing import Any
-from sample_index.utils import create_the_dictionary_structure
+from index.sample_index.utils import create_the_dictionary_structure
 
 
 class SampleDetailsFetcher:

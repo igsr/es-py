@@ -1,10 +1,17 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from index.sample_index.fetch_samples_from_db import SampleDetailsFetcher
+from typing import Any
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def db_config():
+def db_config()-> dict[str, Any]:
+    """DB configuration
+
+    Returns:
+        dict: Dictionary containing the test db configuration
+    """
     return {
         "host": "localhost",
         "port": 3306,
@@ -15,11 +22,25 @@ def db_config():
 
 
 @pytest.fixture
-def fetcher(db_config):
+def fetcher(db_config: dict[str, Any]) -> SampleDetailsFetcher:
+    """The fetcher fixture
+
+    Args:
+        db_config (dict): DB configuration
+
+    Returns:
+        SampleDetailsFetcher: A class
+    """
     return SampleDetailsFetcher(db_config)
 
 
-def test_fetch_samples(mocker, fetcher):
+def test_fetch_samples(mocker: MockerFixture, fetcher: SampleDetailsFetcher):
+    """Test for SampleDetailsFetcher: fetch_samples
+
+    Args:
+        mocker (MockerFixture):  Mocker from the Pytest_mock:MockerFixture
+        fetcher (SampleDetailsFetcher): SampleDetailsFetcher class
+    """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [(1, "Sample1", "TEST123", "M")]
     mock_db = MagicMock()
@@ -34,6 +55,12 @@ def test_fetch_samples(mocker, fetcher):
 
 
 def test_fetch_source_samples(mocker, fetcher):
+    """Test for SampleDetailsFetcher: fetch_source_samples
+
+    Args:
+        mocker (MockerFixture):  Mocker from the Pytest_mock:MockerFixture
+        fetcher (SampleDetailsFetcher): SampleDetailsFetcher class
+    """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
         (1, "test_source", "test source description", "http:/test_source_url")
@@ -51,6 +78,12 @@ def test_fetch_source_samples(mocker, fetcher):
 
 
 def test_fetch_population_samples(mocker, fetcher):
+    """Test for SampleDetailsFetcher: fetch_population_samples
+
+    Args:
+        mocker (MockerFixture):  Mocker from the Pytest_mock:MockerFixture
+        fetcher (SampleDetailsFetcher): SampleDetailsFetcher class
+    """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
         (
@@ -82,6 +115,12 @@ def test_fetch_population_samples(mocker, fetcher):
 
 
 def test_fetch_dataCollections_samples(mocker, fetcher):
+    """Test for SampleDetailsFetcher: fetch_dataCollections_samples
+
+    Args:
+        mocker (MockerFixture):  Mocker from the Pytest_mock:MockerFixture
+        fetcher (SampleDetailsFetcher): SampleDetailsFetcher class
+    """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [
         ("test_igsr", "test pacbio sequence", "test igsr", 1, None)
