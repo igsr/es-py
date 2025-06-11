@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from index.population_index.fetch_information_from_db import PopulationDetailsFetcher
+from index.population_index.utils import create_the_dictionary_structure
 from typing import Any
 from pytest_mock import MockerFixture
 
@@ -32,6 +33,11 @@ def fetcher(db_config: dict[str, Any]) -> PopulationDetailsFetcher:
         PopulationDetailsFetcher: A class
     """
     return PopulationDetailsFetcher(db_config)
+
+
+@pytest.fixture
+def new_dict() -> dict[str, Any]:
+    return create_the_dictionary_structure()
 
 
 def test_fetch_population(mocker: MockerFixture, fetcher: PopulationDetailsFetcher):
@@ -139,7 +145,11 @@ def test_build_population_info(
     }
 
     result = fetcher.build_population_info(population_info, row)
+    assert result["code"] == "code"
     assert result["name"] == "name"
+    assert result["description"] == "desc"
+    assert result["superpopulation"]["code"] == "spcode"
+    assert result["superpopulation"]["name"] == "spname"
 
 
 def test_add_overlap_population_info(
@@ -192,3 +202,4 @@ def test_select_overlap_population_details(
     result = fetcher.select_overlap_population_details(1)
     assert isinstance(result, list)
     assert result[0]["populationElasticId"] == "pop1"
+

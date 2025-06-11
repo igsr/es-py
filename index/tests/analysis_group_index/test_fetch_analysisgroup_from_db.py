@@ -1,10 +1,16 @@
 import pytest
 from unittest.mock import MagicMock, patch
+from typing import Any
 from index.analysis_group_index.fetch_ag_from_db import FetchAGFromDB
 
 
 @pytest.fixture
-def db_config():
+def db_config() -> dict[str, Any]:
+    """Fixture for the db configuration
+
+    Returns:
+        dict[str, Any]: The configuration dictionary
+    """    
     return {
         "host": "localhost",
         "port": 3306,
@@ -15,11 +21,26 @@ def db_config():
 
 
 @pytest.fixture
-def fetcher(db_config):
+def fetcher(db_config: dict[str, Any]) -> FetchAGFromDB:
+    """Fixture for the fetcher
+
+    Args:
+        db_config (dict[str, Any]): The configuration dictionary
+
+    Returns:
+        FetchAGFromDB: FetchAGFromDB class
+    """    
+    
     return FetchAGFromDB(db_config)
 
 
-def test_fetch_information_from_db(mocker, fetcher):
+def test_fetch_information_from_db(mocker: MockerFixture, fetcher: FetchAGFromDB):
+    """Test for fetching information from DB
+
+    Args:
+        mocker (MockerFixture): Mocker for the DB
+        fetcher (FetchAGFromDB): FetchAGFromDB class
+    """    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [(1, "test_exome", "Test exome", "test-exome", 2, None)]
     mock_db = MagicMock()
@@ -32,7 +53,12 @@ def test_fetch_information_from_db(mocker, fetcher):
     assert result[0][1] == "test_exome"
     assert result[0][5] == None
 
-def test_build_ag_info(fetcher):
+def test_build_ag_info(fetcher: FetchAGFromDB):
+    """Test for the FetchAGFromDB- test_build_ag_info
+
+    Args:
+        fetcher (FetchAGFromDB): FetchAGFromDB class
+    """    
     return_value = (1, "test_exome", "Test exome", "test-exome", 2, None)
 
     result = fetcher.build_ag_info(return_value)
