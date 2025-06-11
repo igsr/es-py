@@ -1,6 +1,4 @@
 from mysql.connector import connect
-from data_collection_index.utils import create_the_dictionary_structure
-from config_read import read_from_config_file
 from typing import Any
 
 class DCDetailsFetcher:
