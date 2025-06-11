@@ -40,4 +40,12 @@ def test_fetch_information_from_db(mocker: MockerFixture, fetcher:FetchSPFromDB)
     result = fetcher.fetch_information_from_db()
     assert result[0][0] == "TEST"
     assert isinstance(result, list)
-    
+
+
+def test_build_superpopulation_info(mocker: MockerFixture, fetcher: FetchSPFromDB):
+    row = ("TEST", "Test ancestry", None, None)
+
+    result = fetcher.build_superpopulation_info(row)
+
+    assert result["elasticId"] == "TEST"
+    assert result["name"] == "Test ancestry"
