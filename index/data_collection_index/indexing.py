@@ -62,3 +62,9 @@ def create_data(config_file:str, es_host: str, type_of: str):
 
 if __name__ == "__main__":
     create_data()
+
+
+# Enables programmatic use (from main.py)
+def run(config_file, es_host, type_of):
+    indexer = DataCollectionsIndexer(config_file, es_host, type_of)
+    result = indexer.build_and_index_datacollections()
