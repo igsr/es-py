@@ -58,9 +58,14 @@ class AnalysisGroupIndexer:
             ag_data = self.fetcher.build_ag_info(row)
             action = self.indexer.index_data(ag_data, code, self.type_of)
             actions.append(action)
-
-        if self.create_analysis_group_index() is True:
+        
+        if self.type_of == "create":
+            if self.create_analysis_group_index() is True:
+                self.indexer.bulk_index(actions)
+                click.echo(f"Bulk indexing successful")
+        else:
             self.indexer.bulk_index(actions)
+            click.echo(f"Bulk indexing successful")
 
 
 @click.command()

@@ -63,9 +63,14 @@ class PopulationIndexer:
             action = self.indexer.index_data(population_data, code, self.type_of)
             actions.append(action)
 
-        if self.create_population_index() is True:
+        if self.type_of == "create":
+            if self.create_population_index() is True:
+                self.indexer.bulk_index(actions)
+                click.echo(f"{self.indexer.index_name} has been populated with documents")
+        else:
             self.indexer.bulk_index(actions)
             click.echo(f"{self.indexer.index_name} has been populated with documents")
+
 
 
 @click.command()

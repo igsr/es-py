@@ -44,9 +44,9 @@ class DataCollectionsIndexer:
             bool: True or False if index is created
         """        
         json_data = self.load_json_file()
-        analysis_group = self.indexer.create_index(json_data["settings"], json_data["mappings"])
+        data_collection = self.indexer.create_index(json_data["settings"], json_data["mappings"])
 
-        return analysis_group
+        return data_collection
 
 
     def build_and_index_datacollections(self):
@@ -61,13 +61,17 @@ class DataCollectionsIndexer:
             actions.append(action)
 
         try:
-          if self.create_data_collections_index() is True:
-            response = self.indexer.bulk_index(actions)
-            print(f"Bulk indexing successful")
+            if self.type_of == "create":
+                if self.create_data_collections_index() is True:
+                    self.indexer.bulk_index(actions)
+                    click.echo(f"Bulk indexing successful")
+            else:
+                self.indexer.bulk_index(actions)
+                click.echo(f"Bulk indexing successful")
         except BulkIndexError as e:
-            print("Bulk indexing failed")
+            click.echo("Bulk indexing failed")
             for error in e.errors:
-                print(error)
+                click.echo(error)
    
 
 @click.command()

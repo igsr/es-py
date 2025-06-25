@@ -1,9 +1,11 @@
 import click
-from elasticsearch_indexer import ElasticSearchIndexer
+import json
+from typing import Any
+from index.elasticsearch_indexer import ElasticSearchIndexer
 from .fetch_information_from_db import FetchSPFromDB
-from config_read import read_from_config_file
+from index.config_read import read_from_config_file
 
-
+json_file = "index/super_population_index/superpopulations_mappings.json"
 class SuperPopulationIndexer:
     """Class for the Superpopulation Indexer"""
 
@@ -20,6 +22,30 @@ class SuperPopulationIndexer:
         self.data = read_from_config_file(config_file)
         self.fetcher = FetchSPFromDB(self.data)
         self.indexer = ElasticSearchIndexer(es_host, "superpopulation")
+    
+    def load_json_file(self)-> dict[str, Any]:
+        """Loading Json file to get the settings and the mappings
+
+        Returns:
+            dict[str, Any]: json data
+        """        
+        with open(json_file, "r") as file:
+            data = json.load(file)
+        
+        return data
+    
+    def create_superpopulation_index(self) -> bool:
+        """Create Superpopulation index
+
+        Returns:
+            bool: True or False if index is created
+        """        
+       
+        json_data = self.load_json_file()
+        superpopulation = self.indexer.create_index(json_data["settings"], json_data["mappings"])
+
+        return superpopulation
+
 
     def build_and_index_superpopulation(self):
         """Builds and indexes the superpopulation index"""
@@ -31,7 +57,13 @@ class SuperPopulationIndexer:
             action = self.indexer.index_data(super_pop_data, elasticId, self.type_of)
             actions.append(action)
 
-        self.indexer.bulk_index(actions)
+        if self.type_of == "create":
+            if self.create_superpopulation_index() is True:
+                self.indexer.bulk_index(actions)
+                click.echo("Index built successfully")
+        else:
+            self.indexer.bulk_index(actions)
+            click.echo("Index built successfully")
 
 
 @click.command()
