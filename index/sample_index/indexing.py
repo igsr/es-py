@@ -2,9 +2,9 @@ import click
 import sys
 import json
 from typing import Any
-from elasticsearch_indexer import ElasticSearchIndexer
-from sample_index.fetch_samples_from_db import SampleDetailsFetcher
-from config_read import read_from_config_file
+from index.elasticsearch_indexer import ElasticSearchIndexer
+from .fetch_samples_from_db import SampleDetailsFetcher
+from index.config_read import read_from_config_file
 
 json_file = "index/sample_index/sample.json"
 class SampleIndexer:

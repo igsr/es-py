@@ -2,7 +2,7 @@ import elasticsearch
 import click
 from elasticsearch import Elasticsearch, exceptions
 from elasticsearch.helpers import bulk
-from typing import Any
+from typing import Any, Dict, List
 
 
 class ElasticSearchIndexer:
@@ -52,27 +52,24 @@ class ElasticSearchIndexer:
             action_type (str): action type : create or update
 
         Returns:
-            _type_: _description_
+            dict[str, Any]:  Bulk indexing action dict
         """
-        data_index = {
+        return {
             "_op_type": action_type,
             "_index": self.index_name,
             "_id": doc_id,
             "doc": data,
         }
-        return data_index
 
-    def bulk_index(self, actions: list):
-        """Bulk indexing
+    def bulk_index(self, actions: List[Dict[str, Any]]):
+        """
+        Perform a bulk indexing operation.
 
         Args:
-            actions (list): list of dictionaries
+            actions (List[Dict[str, Any]]): List of actions to be indexed
 
         Raises:
-            Exception: BadRequestError
-
-        Returns:
-            _type_: bulk action
+            Exception: Raised on any bulk indexing failure
         """
         try:
             bulk(self.client, actions)

@@ -1,10 +1,12 @@
 import click
 import sys
-from elasticsearch_indexer import ElasticSearchIndexer
+import json
+from typing import Any
+from index.elasticsearch_indexer import ElasticSearchIndexer
 from file_index.fetch_information_from_db import FetchFileFromDB
-from config_read import read_from_config_file
+from index.config_read import read_from_config_file
 
-
+json_file = "index/file_index/file.json"
 class FileIndexer:
     """FileIndexer class"""
 
@@ -56,6 +58,31 @@ class FileIndexer:
         if self._indexer is None:
             self._indexer = ElasticSearchIndexer(self.es_host, "file")
         return self._indexer
+    
+    def load_json_file(self) -> dict[str, Any]:
+        """Loading Json file to get the settings and the mappings
+
+        Returns:
+            dict[str, Any]: json data
+        """
+        with open(json_file, "r") as file:
+            data = json.load(file)
+
+        return data
+
+    def create_file_index(self) -> bool:
+        """Create Sample index
+
+        Returns:
+            bool: True or False if index is created
+        """
+        json_data = self.load_json_file()
+        file = self.indexer.create_index(
+            json_data["settings"], json_data["mappings"]
+        )
+
+        return file
+
 
     def generate_actions(self):
         """Generate actions that will be used for bulk index
@@ -77,8 +104,13 @@ class FileIndexer:
             _type_: Bullk indexed
         """
         actions = self.generate_actions()
-        return self.indexer.bulk_index(actions)
-
+        if self.type_of == "create":
+            if self.create_file_index() is True:
+                self.indexer.bulk_index(actions)
+                click.echo("Bulk indexing successful")
+        else:
+            self.indexer.bulk_index(actions)
+            click.echo("Bulk indexing successful")
 
 @click.command()
 @click.option(
