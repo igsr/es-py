@@ -1,6 +1,8 @@
 import elasticsearch
-from elasticsearch import Elasticsearch
+import click
+from elasticsearch import Elasticsearch, exceptions
 from elasticsearch.helpers import bulk
+from typing import Any
 
 
 class ElasticSearchIndexer:
@@ -16,7 +18,34 @@ class ElasticSearchIndexer:
         self.client = Elasticsearch(es_host)
         self.index_name = index_name
 
-    def index_data(self, data: dict, doc_id: str, action_type: str):
+    def create_index(self, settings: dict[str, Any], mappings: dict[str, Any]) -> bool:
+        """Creates an ElasticSearch Index with the settings and mappings
+
+        Args:
+            settings (dict[str, Any]): settings for the index
+            mappings (dict[str, Any]): mappings for the index
+
+        Returns:
+            bool: True or False
+        """        
+        if self.client.indices.exists(index=self.index_name):
+            click.echo(f"Index '{self.index_name}' already exists.")
+            return False
+        try:
+            self.client.indices.create(
+                index=self.index_name,
+                body={
+                    "settings": settings,
+                    "mappings": mappings
+                }
+            )
+            click.echo(f"Index '{self.index_name}' created successfully.")
+            return True
+        except exceptions as e:
+            click.echo(f"Failed to create index: {e}")
+            return False
+
+    def index_data(self, data: dict[str, Any], doc_id: str, action_type: str) -> dict[str, Any]:
         """Creation of the index (required for the action for bulk action)
 
         Args:
