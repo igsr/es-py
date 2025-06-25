@@ -1,10 +1,12 @@
 import click
 import sys
+import json
+from typing import Any
 from elasticsearch_indexer import ElasticSearchIndexer
 from sample_index.fetch_samples_from_db import SampleDetailsFetcher
 from config_read import read_from_config_file
 
-
+json_file = "index/sample_index/sample.json"
 class SampleIndexer:
     """SampleIndexer Class """
 
@@ -56,6 +58,30 @@ class SampleIndexer:
         if self._indexer is None:
             self._indexer = ElasticSearchIndexer(self.es_host, "sample")
         return self._indexer
+    
+    def load_json_file(self) -> dict[str, Any]:
+        """Loading Json file to get the settings and the mappings
+
+        Returns:
+            dict[str, Any]: json data
+        """
+        with open(json_file, "r") as file:
+            data = json.load(file)
+
+        return data
+
+    def create_sample_index(self) -> bool:
+        """Create Sample index
+
+        Returns:
+            bool: True or False if index is created
+        """
+        json_data = self.load_json_file()
+        sample = self.indexer.create_index(
+            json_data["settings"], json_data["mappings"]
+        )
+
+        return sample
 
     def generate_actions(self):
         """Generate actions that will be used for bulk index
@@ -77,7 +103,13 @@ class SampleIndexer:
             _type_: Bulk actions
         """
         actions = self.generate_actions()
-        return self.indexer.bulk_index(actions)
+        if self.type_of == "create":
+            if self.create_sample_index() is True:
+                self.indexer.bulk_index(actions)
+                click.echo("Bulk indexing successful")
+        else:
+            self.indexer.bulk_index(actions)
+            click.echo("Bulk indexing successful")
 
 
 @click.command()
@@ -93,13 +125,6 @@ class SampleIndexer:
     "--type_of", "-t", type=str, help="Update or create an index", required=True
 )
 def create_data(config_file: str, es_host: str, type_of: str):
-    """_summary_
-
-    Args:
-        config_file (str): _description_
-        es_host (str): _description_
-        type_of (str): _description_
-    """
     sample_indexer = SampleIndexer(config_file, es_host, type_of)
     sample_indexer.build_and_index_sample_info()
 
