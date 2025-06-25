@@ -36,7 +36,7 @@ class AnalysisGroupIndexer:
         
         return data
     
-    def create_population_index(self) -> bool:
+    def create_analysis_group_index(self) -> bool:
         """Create Analysis group index
 
         Returns:
@@ -59,7 +59,7 @@ class AnalysisGroupIndexer:
             action = self.indexer.index_data(ag_data, code, self.type_of)
             actions.append(action)
 
-        if self.create_population_index() is True:
+        if self.create_analysis_group_index() is True:
             self.indexer.bulk_index(actions)
 
 

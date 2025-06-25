@@ -1,9 +1,13 @@
-import click 
-from elasticsearch_indexer import ElasticSearchIndexer
+import click
+from typing import Any
+import json
+from index.elasticsearch_indexer import ElasticSearchIndexer
 from .fetch_information_from_db import DCDetailsFetcher
-from config_read import read_from_config_file
+from index.config_read import read_from_config_file
 from elasticsearch.helpers import BulkIndexError
 
+
+json_file = "index/data_collection_index/data_collections.json"
 class DataCollectionsIndexer:
     """DataCollectionsIndexer class
     """
@@ -22,6 +26,28 @@ class DataCollectionsIndexer:
         self.fetcher = DCDetailsFetcher(self.data)
         self.indexer = ElasticSearchIndexer(es_host, "data_collections")
 
+    def load_json_file(self)-> dict[str, Any]:
+        """Loading Json file to get the settings and the mappings
+
+        Returns:
+            dict[str, Any]: json data
+        """        
+        with open(json_file, "r") as file:
+            data = json.load(file)
+        
+        return data
+    
+    def create_data_collections_index(self) -> bool:
+        """Create Analysis group index
+
+        Returns:
+            bool: True or False if index is created
+        """        
+        json_data = self.load_json_file()
+        analysis_group = self.indexer.create_index(json_data["settings"], json_data["mappings"])
+
+        return analysis_group
+
 
     def build_and_index_datacollections(self):
         """Build and index dataCollections
@@ -35,8 +61,9 @@ class DataCollectionsIndexer:
             actions.append(action)
 
         try:
-          response = self.indexer.bulk_index(actions)
-          print(f"Bulk indexing successful {response}")
+          if self.create_data_collections_index() is True:
+            response = self.indexer.bulk_index(actions)
+            print(f"Bulk indexing successful")
         except BulkIndexError as e:
             print("Bulk indexing failed")
             for error in e.errors:
