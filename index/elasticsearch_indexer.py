@@ -27,17 +27,13 @@ class ElasticSearchIndexer:
 
         Returns:
             bool: True or False
-        """        
+        """
         if self.client.indices.exists(index=self.index_name):
             click.echo(f"Index '{self.index_name}' already exists.")
             return False
         try:
             self.client.indices.create(
-                index=self.index_name,
-                body={
-                    "settings": settings,
-                    "mappings": mappings
-                }
+                index=self.index_name, body={"settings": settings, "mappings": mappings}
             )
             click.echo(f"Index '{self.index_name}' created successfully.")
             return True
@@ -45,7 +41,9 @@ class ElasticSearchIndexer:
             click.echo(f"Failed to create index: {e}")
             return False
 
-    def index_data(self, data: dict[str, Any], doc_id: str, action_type: str) -> dict[str, Any]:
+    def index_data(
+        self, data: dict[str, Any], doc_id: str, action_type: str
+    ) -> dict[str, Any]:
         """Creation of the index (required for the action for bulk action)
 
         Args:

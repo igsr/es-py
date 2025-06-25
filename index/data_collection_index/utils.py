@@ -7,7 +7,7 @@ def create_the_dictionary_structure() -> dict[str, Any]:
 
     Returns:
         dict[str, Any]: The initialized dictionary
-    """    
+    """
     datacollections_info = defaultdict(
         lambda: {
             "code": None,
@@ -17,7 +17,7 @@ def create_the_dictionary_structure() -> dict[str, Any]:
             "website": None,
             "displayOrder": None,
             "samples": {"count": 0},
-            "populations": {"count" : 0},
+            "populations": {"count": 0},
         }
     )
 

@@ -48,7 +48,7 @@ class FetchSPFromDB:
 
         Returns:
             dict[str, Any]: Updated dictionary
-        """        
+        """
         superpopulation = create_the_dictionary_structure()
         superpopulation.update(
             {
@@ -67,7 +67,7 @@ def create_the_dictionary_structure() -> dict[str, Any]:
 
     Returns:
         dict[str, Any]: New dictionary
-    """    
+    """
     superpopulation = {
         "elasticId": None,
         "name": None,

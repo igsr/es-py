@@ -8,9 +8,10 @@ from elasticsearch.helpers import BulkIndexError
 
 
 json_file = "index/data_collection_index/data_collections.json"
+
+
 class DataCollectionsIndexer:
-    """DataCollectionsIndexer class
-    """
+    """DataCollectionsIndexer class"""
 
     def __init__(self, config_file: str, es_host: str, type_of: str):
         """Initialization of the DataCollectionsIndexer
@@ -26,32 +27,32 @@ class DataCollectionsIndexer:
         self.fetcher = DCDetailsFetcher(self.data)
         self.indexer = ElasticSearchIndexer(es_host, "data_collections")
 
-    def load_json_file(self)-> dict[str, Any]:
+    def load_json_file(self) -> dict[str, Any]:
         """Loading Json file to get the settings and the mappings
 
         Returns:
             dict[str, Any]: json data
-        """        
+        """
         with open(json_file, "r") as file:
             data = json.load(file)
-        
+
         return data
-    
+
     def create_data_collections_index(self) -> bool:
         """Create Analysis group index
 
         Returns:
             bool: True or False if index is created
-        """        
+        """
         json_data = self.load_json_file()
-        data_collection = self.indexer.create_index(json_data["settings"], json_data["mappings"])
+        data_collection = self.indexer.create_index(
+            json_data["settings"], json_data["mappings"]
+        )
 
         return data_collection
 
-
     def build_and_index_datacollections(self):
-        """Build and index dataCollections
-        """
+        """Build and index dataCollections"""
         actions = []
         data_collection = self.fetcher.fetch_datacollections()
         for row in data_collection:
@@ -72,7 +73,7 @@ class DataCollectionsIndexer:
             click.echo("Bulk indexing failed")
             for error in e.errors:
                 click.echo(error)
-   
+
 
 @click.command()
 @click.option(
@@ -86,7 +87,7 @@ class DataCollectionsIndexer:
 @click.option(
     "--type_of", "-t", type=str, help="Update or create an index", required=True
 )
-def create_data(config_file:str, es_host: str, type_of: str):
+def create_data(config_file: str, es_host: str, type_of: str):
     dc_indexer = DataCollectionsIndexer(config_file, es_host, type_of)
     dc_indexer.build_and_index_datacollections()
 

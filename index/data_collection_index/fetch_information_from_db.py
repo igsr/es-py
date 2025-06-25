@@ -2,11 +2,10 @@ from mysql.connector import connect
 from typing import Any
 from .utils import create_the_dictionary_structure
 
-class DCDetailsFetcher:
-    """DataCollectionDetails Fetcher class
-    """    
 
-    
+class DCDetailsFetcher:
+    """DataCollectionDetails Fetcher class"""
+
     def __init__(self, db_config: dict):
         """Initialization of the DCDetailsFetcher clasd
 
@@ -19,7 +18,6 @@ class DCDetailsFetcher:
         self.password = db_config["password"]
         self.database = db_config["database"]
 
-
     def fetch_datacollections(self) -> list[tuple]:
         """Fetch dataCollections from the database
 
@@ -27,9 +25,7 @@ class DCDetailsFetcher:
             list[tuple]: List of rows from the database
         """
 
-        select_all_dc_sql = (
-            "SELECT * from data_collection"
-        )
+        select_all_dc_sql = "SELECT * from data_collection"
 
         db = connect(
             host=self.host,
@@ -46,15 +42,14 @@ class DCDetailsFetcher:
 
         return data_collection
 
-
     def fetch_samples_count(self, dc_id: int) -> int:
         """Fetching samples count from the database
 
         Args:
-            dc_id (int): Datacollection id 
+            dc_id (int): Datacollection id
 
         Returns:
-            int: The sample count 
+            int: The sample count
         """
 
         select_samples_count = """ SELECT count(samples.sample_id) AS num_samples
@@ -78,7 +73,6 @@ class DCDetailsFetcher:
         db.close()
 
         return samples_count
-
 
     def fetch_population_count(self, dc_id: int) -> int:
         """Fetch population count from the database
@@ -119,12 +113,11 @@ class DCDetailsFetcher:
 
         return population_count
 
-
     def fetch_publication_info(self, dc_id: int) -> list[tuple]:
-        """Fetches publication from the database for each datacollection id 
+        """Fetches publication from the database for each datacollection id
 
         Args:
-            dc_id (int): Datacollection id 
+            dc_id (int): Datacollection id
 
         Returns:
             list[tuple]: List of rows of information from the database
@@ -148,23 +141,22 @@ class DCDetailsFetcher:
 
         return publication_info
 
-
     def fetch_analysis_information(self, dc_id) -> list[tuple]:
         """Fetches Analysis group information from the database
 
         Args:
-            dc_id (_type_): Data collection id 
+            dc_id (_type_): Data collection id
 
         Returns:
             list[tuple]: List of rows of information from the database
-        """        
+        """
         analysis_info_sql = """SELECT dt.code data_type, ag.description analysis_group
             FROM file f LEFT JOIN data_type dt ON f.data_type_id = dt.data_type_id
             LEFT JOIN analysis_group ag ON f.analysis_group_id = ag.analysis_group_id
             INNER JOIN file_data_collection fdc ON f.file_id=fdc.file_id
             WHERE fdc.data_collection_id= %s
             GROUP BY dt.data_type_id, ag.analysis_group_id """
-        
+
         db = connect(
             host=self.host,
             port=self.port,
@@ -181,16 +173,15 @@ class DCDetailsFetcher:
 
         return analysis_info
 
-
     def populate_the_dictionary_structure(self, row: tuple) -> dict[str, Any]:
         """Populating the dataCollection dictionary
 
         Args:
-            row (tuple): The row containing info from the fetch_datacollections 
+            row (tuple): The row containing info from the fetch_datacollections
 
         Returns:
             dict[str, Any]: Updated dictionary
-        """        
+        """
         dc_data = create_the_dictionary_structure()
         dc_data.update(
             {
@@ -199,12 +190,8 @@ class DCDetailsFetcher:
                 "shortTitle": row[3],
                 "dataReusePolicy": row[5],
                 "website": row[7],
-                "samples": {
-                    "count": self.fetch_samples_count(row[0])
-                },
-                "populations" : {
-                    "count": self.fetch_population_count(row[0])
-                }
+                "samples": {"count": self.fetch_samples_count(row[0])},
+                "populations": {"count": self.fetch_population_count(row[0])},
             }
         )
 
@@ -227,6 +214,4 @@ class DCDetailsFetcher:
             if category not in dc_data["dataTypes"]:
                 dc_data["dataTypes"].append(category)
 
-
         return dc_data
-

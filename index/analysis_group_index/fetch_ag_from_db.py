@@ -17,7 +17,7 @@ class FetchAGFromDB:
         """Fetch analysis group information from database
 
         Returns:
-            list[tuple]: Rows of information from the database 
+            list[tuple]: Rows of information from the database
         """
 
         fetch_ag_sql = """SELECT ag.* from file f INNER JOIN analysis_group ag ON f.analysis_group_id = ag.analysis_group_id INNER JOIN sample_file sf on sf.file_id = f.file_id GROUP BY ag.analysis_group_id"""
@@ -40,7 +40,7 @@ class FetchAGFromDB:
         return ag
 
     def build_ag_info(self, row: tuple) -> dict[str, Any]:
-        """Build analysis group information 
+        """Build analysis group information
 
         Args:
             row (tuple): Row, containing the information from the database
