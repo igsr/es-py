@@ -1,0 +1,53 @@
+{
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1,
+      "routing": {
+        "allocation": {
+          "include": {
+            "_tier_preference": "data_content"
+          }
+        }
+      }
+    },
+    "mappings": {
+        "properties": {
+          "doc": {
+            "properties": {
+              "code": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "description": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "displayOrder": {
+                "type": "long"
+              },
+              "shortTitle": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+}
+    
+  
