@@ -1,7 +1,7 @@
 import elasticsearch
 import click
 from elasticsearch import Elasticsearch, exceptions
-from elasticsearch.helpers import bulk
+from elasticsearch.helpers import bulk, BulkIndexError
 from typing import Any, Dict, List
 
 
@@ -29,7 +29,7 @@ class ElasticSearchIndexer:
             bool: True or False
         """
         if self.client.indices.exists(index=self.index_name):
-            click.echo(f"Index '{self.index_name}' already exists.")
+            click.echo(f"Index '{self.index_name}' already exists., Change --type_of to update")
             return False
         try:
             self.client.indices.create(
@@ -54,13 +54,22 @@ class ElasticSearchIndexer:
         Returns:
             dict[str, Any]:  Bulk indexing action dict
         """
-        return {
-            "_op_type": action_type,
-            "_index": self.index_name,
-            "_id": doc_id,
-            "doc": data,
-        }
-
+        if action_type == "create":
+            return {
+                "_op_type": action_type,
+                "_index": self.index_name,
+                "_id": doc_id,
+                "doc": data,
+            }
+        elif action_type == "update":
+            return {
+                "_op_type": action_type,
+                "_index": self.index_name,
+                "_id": doc_id,
+                "doc": data,
+                "doc_as_upsert": True # tells ElasticSearch if document does not exist, insert it 
+            }
+        
     def bulk_index(self, actions: List[Dict[str, Any]]):
         """
         Perform a bulk indexing operation.
@@ -75,3 +84,7 @@ class ElasticSearchIndexer:
             bulk(self.client, actions)
         except elasticsearch.BadRequestError as e:
             raise Exception(f"Error during bulk indexing: {str(e)}")
+        except BulkIndexError as e:
+            click.echo("Bulk indexing failed")
+            for error in e.errors:
+                click.echo(error)

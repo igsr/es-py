@@ -3,7 +3,7 @@ import sys
 import json
 from typing import Any
 from index.elasticsearch_indexer import ElasticSearchIndexer
-from file_index.fetch_information_from_db import FetchFileFromDB
+from .fetch_information_from_db import FetchFileFromDB
 from index.config_read import read_from_config_file
 
 json_file = "index/file_index/file.json"
@@ -91,10 +91,12 @@ class FileIndexer:
             _type_: A generator
         """
         files_info = self.fetcher.fetch_file_from_db()
-
+        file_id_info = self.fetcher.fetch_file_id_from_db()
+        dc_data, sp_data = self.fetcher.preload_data(file_id_info)
+        
         for row in files_info:
             code = row[0]
-            files_data = self.fetcher.populate_the_dictionary(row)
+            files_data = self.fetcher.populate_the_dictionary(row, dc_data, sp_data )
             yield self.indexer.index_data(files_data, code, self.type_of)
 
     def build_and_index_file_info(self):
