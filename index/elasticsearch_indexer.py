@@ -29,7 +29,9 @@ class ElasticSearchIndexer:
             bool: True or False
         """
         if self.client.indices.exists(index=self.index_name):
-            click.echo(f"Index '{self.index_name}' already exists., Change --type_of to update")
+            click.echo(
+                f"Index '{self.index_name}' already exists., Change --type_of to update"
+            )
             return False
         try:
             self.client.indices.create(
@@ -47,19 +49,19 @@ class ElasticSearchIndexer:
         """Creation of the index (required for the action for bulk action)
 
         Args:
-            population_data (dict): Population information
-            doc_id (str): doc_id information
-            action_type (str): action type : create or update
+            data (dict): The data to index
+            doc_id (str): Document ID
+            action_type (str): Action type: create or update
 
         Returns:
-            dict[str, Any]:  Bulk indexing action dict
+            dict[str, Any]: Bulk indexing action dict
         """
         if action_type == "create":
             return {
                 "_op_type": action_type,
                 "_index": self.index_name,
                 "_id": doc_id,
-                "doc": data,
+                "_source": data,
             }
         elif action_type == "update":
             return {
@@ -67,9 +69,11 @@ class ElasticSearchIndexer:
                 "_index": self.index_name,
                 "_id": doc_id,
                 "doc": data,
-                "doc_as_upsert": True # tells ElasticSearch if document does not exist, insert it 
+                "doc_as_upsert": True,
             }
-        
+        else:
+            raise ValueError(f"Unsupported action_type: {action_type}")
+
     def bulk_index(self, actions: List[Dict[str, Any]]):
         """
         Perform a bulk indexing operation.
