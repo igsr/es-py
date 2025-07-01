@@ -51,7 +51,6 @@ def test_fetch_information_from_db(mocker, fetcher: FetchAGFromDB):
 
     result = fetcher.fetch_information_from_DB()
     assert result[0][1] == "test_exome"
-    assert result[0][5] == None
 
 def test_build_ag_info(fetcher: FetchAGFromDB):
     """Test for the FetchAGFromDB- test_build_ag_info

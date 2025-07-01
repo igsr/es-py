@@ -57,7 +57,6 @@ class FetchAGFromDB:
                 "description": row[2],
                 "shortTitle": row[3],
                 "displayOrder": row[4],
-                "longDescription": row[5],
             }
         )
 
@@ -76,7 +75,6 @@ def create_the_dictionary_structure() -> dict[str, Any]:
         "description": None,
         "shortTitle": None,
         "displayOrder": None,
-        "longDescription": None,
     }
 
     return analysis_group
