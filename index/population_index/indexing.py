@@ -4,7 +4,6 @@ from typing import Any
 from index.elasticsearch_indexer import ElasticSearchIndexer
 from index.population_index.fetch_information_from_db import PopulationDetailsFetcher
 from index.config_read import read_from_config_file
-from index.population_index.utils import create_the_dictionary_structure
 
 json_file = "index/population_index/populations_mappings.json"
 
