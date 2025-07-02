@@ -181,7 +181,7 @@ class PopulationDetailsFetcher:
             "longitude": float(row[4]),
             "elasticId": row[5],
             "display_order": row[6],
-            "samples": row[7],
+            "samples": {"count" : row[7]},
             "superpopulation": {
                 "code": row[8],
                 "name": row[9],
