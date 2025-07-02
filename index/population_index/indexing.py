@@ -51,15 +51,17 @@ class PopulationIndexer:
 
     def build_and_index_population_info(self):
         """Build and index population info"""
-        populations = create_the_dictionary_structure()
         pop_info = self.fetcher.fetch_population()
+        pop_ids = self.fetcher.fetch_population_ids()
         actions = []
-
+        dc_map = self.fetcher.fetch_data_collection_details(pop_ids)
+        overlap_map = self.fetcher.fetch_overlap_population_details(pop_ids)
         for row in pop_info:
-            code = row[0]
+            code = row[5]
             if not code:
                 continue
-            population_data = self.fetcher.build_population_info(populations, row)
+            
+            population_data = self.fetcher.build_population_info(row, dc_map, overlap_map)
 
             action = self.indexer.index_data(population_data, code, self.type_of)
             actions.append(action)

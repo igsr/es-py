@@ -1,215 +1,238 @@
 import mysql.connector
-from typing import Any
+from collections import defaultdict
+from typing import Any, Dict, List, Tuple
 
 
 class PopulationDetailsFetcher:
-    def __init__(self, db_config: dict):
-        """Initialization of the population details fetcher
+    def __init__(self, db_config: dict[str, Any]):
+        """Initializing the population details fetcher
 
         Args:
-            db_config (dict): db configuration
-        """
+            db_config (dict): DB configuration dictionary
+        """        
         self.db_config = db_config
 
-    def fetch_population(self) -> list[tuple]:
-        """Fetching population
-
-        Args:
-            self.db_config (dict): The db_configuration
+    def fetch_population(self) -> List[Tuple]:
+        """Fetches population information
 
         Returns:
-            list[tuple]: Cursor.fetchall list of tuples
+            List[Tuple]: List of rows containing the population information
+        """        
+        query = """
+            SELECT p.code, p.name, p.description, p.latitude, p.longitude, p.elastic_id, p.display_order,
+                   COUNT(DISTINCT sample_id) AS num_samples, sp.code, sp.name, sp.display_colour, 
+                   sp.display_order, p.population_id 
+            FROM population p
+            JOIN superpopulation sp ON p.superpopulation_id = sp.superpopulation_id
+            JOIN dc_sample_pop_assign dcsp ON p.population_id = dcsp.population_id
+            GROUP BY p.population_id
         """
-        population_sql = """SELECT p.code, p.name, p.description, p.latitude, p.longitude, p.elastic_id, p.display_order,
-                            COUNT(DISTINCT sample_id) AS num_samples, sp.code, sp.name, sp.display_colour, 
-                            sp.display_order, p.population_id from population p, superpopulation sp, dc_sample_pop_assign dcsp 
-                            where p.superpopulation_id = sp.superpopulation_id 
-                            and p.population_id=dcsp.population_id group by p.population_id"""
 
-        db = mysql.connector.connect(
+        with mysql.connector.connect(
+            host=self.db_config["host"],
+            port=self.db_config["port"],
+            database=self.db_config["database"],
+            user=self.db_config["user"],
+            password=self.db_config["password"],
+        ) as db:
+            cursor = db.cursor()
+            cursor.execute(query)
+            return cursor.fetchall()
+
+    def fetch_population_ids(self) -> List[int]:
+        """Fetching population ids from the database
+
+        Returns:
+            List[int]: List of ids, used to fetch data collection and overlap population details
+        """
+
+        query = "SELECT population_id FROM population"
+
+        with mysql.connector.connect(
+            host=self.db_config["host"],
+            port=self.db_config["port"],
+            database=self.db_config["database"],
+            user=self.db_config["user"],
+            password=self.db_config["password"],
+        ) as db:
+            cursor = db.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return [row[0] for row in rows]
+
+    def fetch_data_collection_details(
+        self, pop_ids: List[int]
+    ) -> Dict[int, List[Tuple]]:
+        """Fetches data collection details, so it reduces the query to the DB
+
+        Args:
+            pop_ids (List[int]): list of pop ids
+
+        Returns:
+            Dict[int, List[Tuple]]: A dictionary containing the key and the list of rows from the db
+        """        
+        if not pop_ids:
+            return {}
+
+        placeholders = ",".join(["%s"] * len(pop_ids))
+        query = f"""
+            SELECT p.population_id, dt.code, ag.description, dc.title, dc.data_collection_id, dc.reuse_policy 
+            FROM population p
+            JOIN dc_sample_pop_assign dspa ON p.population_id = dspa.population_id
+            JOIN sample_file sf ON dspa.sample_id = sf.sample_id
+            JOIN file f ON sf.file_id = f.file_id
+            JOIN analysis_group ag ON f.analysis_group_id = ag.analysis_group_id
+            JOIN data_type dt ON f.data_type_id = dt.data_type_id
+            JOIN file_data_collection fdc ON f.file_id = fdc.file_id
+            JOIN data_collection dc ON fdc.data_collection_id = dc.data_collection_id
+            WHERE p.population_id IN ({placeholders})
+            GROUP BY dt.data_type_id, ag.analysis_group_id, dc.data_collection_id, p.population_id
+        """
+
+        with mysql.connector.connect(
             host=self.db_config["host"],
             port=self.db_config["port"],
             user=self.db_config["user"],
             database=self.db_config["database"],
             password=self.db_config["password"],
-        )
-        cursor = db.cursor()
-        cursor.execute(population_sql)
-        population = cursor.fetchall()
-        cursor.close()
-        db.close()
+        ) as db:
+            cursor = db.cursor()
+            cursor.execute(query, pop_ids)
+            rows = cursor.fetchall()
+            cursor.close()
 
-        return population
+        results = defaultdict(list)
+        for row in rows:
+            pop_id = row[0]
+            results[pop_id].append(row[1:])
 
-    def data_collection_details_population(
-        self,
-        pop_id: int,
-    ) -> list[tuple]:
-        """Fetches all the data collection information of a population based on the population_id
-        Basically any collection where the population can be found
+        return results
+
+    def fetch_overlap_population_details(
+        self, pop_ids: List[int]
+    ) -> Dict[int, List[Dict[str, Any]]]:
+        """Fetches overlap population details
 
         Args:
-            id (int): Population id from the database
+            pop_ids (List[int]): list of pop ids
 
         Returns:
-            list[tuple]: List of tuples from the cursor.fetchall()
+            Dict[int, List[Dict[str, Any]]]: A dictionary containing the key and the list of rows from the db
+        """        
+        if not pop_ids:
+            return {}
+
+        placeholders = ",".join(["%s"] * len(pop_ids))
+
+        query = f"""
+            SELECT DISTINCT dspa1.population_id AS source_population_id,
+                   p.elastic_id AS populationElasticId,
+                   p.description AS populationDescription,
+                   s.name AS sharedSampleName
+            FROM dc_sample_pop_assign dspa1
+            JOIN dc_sample_pop_assign dspa2 ON dspa1.sample_id = dspa2.sample_id
+            JOIN population p ON dspa2.population_id = p.population_id
+            JOIN sample s ON dspa1.sample_id = s.sample_id
+            WHERE dspa1.population_id IN ({placeholders})
+              AND dspa2.population_id != dspa1.population_id
+            ORDER BY dspa1.population_id, p.description, s.name;
         """
 
-        files_sql = """ SELECT dt.code, ag.description, dc.title, dc.data_collection_id, dc.reuse_policy FROM population p, dc_sample_pop_assign dspa, 
-                        sample_file sf, file f, analysis_group ag, data_type dt, file_data_collection fdc, data_collection dc WHERE p.population_id=%s 
-                        and p.population_id=dspa.population_id and dspa.sample_id=sf.sample_id and sf.file_id=f.file_id and f.analysis_group_id=ag.analysis_group_id 
-                        and f.data_type_id=dt.data_type_id and f.file_id=fdc.file_id and fdc.data_collection_id=dc.data_collection_id and dspa.data_collection_id=dc.data_collection_id 
-                        GROUP BY dt.data_type_id, ag.analysis_group_id, dc.data_collection_id"""
-
-        db = mysql.connector.connect(
+        with mysql.connector.connect(
             host=self.db_config["host"],
             port=self.db_config["port"],
-            user=self.db_config["user"],
             database=self.db_config["database"],
+            user=self.db_config["user"],
             password=self.db_config["password"],
-        )
+        ) as db:
+            cursor = db.cursor()
+            cursor.execute(query, pop_ids)
+            rows = cursor.fetchall()
 
-        cursor = db.cursor()
-        cursor.execute(files_sql, (pop_id,))
-        file_info = cursor.fetchall()
-        cursor.close()
-        db.close()
+        results = defaultdict(list)
+        for row in rows:
+            results[row[0]].append(row)
 
-        return file_info
-
-    def add_data_collection_details(
-        self, pop_info: dict[str, Any], pop_id: int
-    ) -> dict[str, Any]:
-        """Adds the data collection details to the build pop_info dictionary
-
-        Args:
-            pop_info (dict[str, Any]): The population info dictionary we are building
-            pop_id (int): pop id which is used to fetch the data collection information for that population
-
-        Returns:
-            dict: The added information of the data collection details to the population info dictionary we are building
-        """
-        for dc in self.data_collection_details_population(pop_id):
-            if dc[1] not in pop_info["dataCollections"][dc[0]]:
-                pop_info["dataCollections"][dc[0]].append(dc[1])
-            if dc[0] not in pop_info["dataCollections"]["dataTypes"]:
-                pop_info["dataCollections"]["dataTypes"].append(dc[0])
-            pop_info["dataCollections"]["dataReusePolicy"] = dc[4]
-            pop_info["dataCollections"]["title"] = dc[2]
-
-        return pop_info
+        return results
 
     def build_population_info(
-        self, population_info: dict[str, Any], row: tuple
-    ) -> dict[str, Any]:
-        """Builds the population information dictionary
+        self,
+        row: Tuple,
+        data_collection_map: Dict[int, List[Tuple]],
+        overlap_map: Dict[int, List[Dict[str, Any]]],
+    ) -> Dict[str, Any]:
+        """Build population information dictionary (doc)
 
         Args:
-            population_info (dict[str, Any]): population info dictionary
-            row (tuple): the tuple containing the information we will be using to build
+            row (Tuple): Result from the fetch_population function
+            data_collection_map (Dict[int, List[Tuple]]): Result from the fetch data_collection_details
+            overlap_map (Dict[int, List[Dict[str, Any]]]): Result from the overlap_map details
 
         Returns:
-            dict[str, Any]: Returns the populated information dictionary
-        """
-        population_info.update(
-            {
-                "code": row[0],
-                "name": row[1],
-                "description": row[2],
-                "latitude": float(row[3]),
-                "longitude": float(row[4]),
-                "elasticId": row[5],
-                "display_order": row[6],
-                "samples": row[7],
-                "superpopulation": {
-                    "code": row[8],
-                    "name": row[9],
-                    "display_color": row[10],
-                    "display_order": row[11],
-                },
-            }
-        )
+            Dict[str, Any]: Population doc
+        """        
+        pop_id = row[12]
 
-        # Add data collections details
-        self.add_data_collection_details(population_info, row[12])
+        population_info = {
+            "code": row[0],
+            "name": row[1],
+            "description": row[2],
+            "latitude": float(row[3]),
+            "longitude": float(row[4]),
+            "elasticId": row[5],
+            "display_order": row[6],
+            "samples": row[7],
+            "superpopulation": {
+                "code": row[8],
+                "name": row[9],
+                "display_color": row[10],
+                "display_order": row[11],
+            },
+            "dataCollections": {
+                "dataTypes": [],
+            },
+            "overlappingPopulations": {
+                "sharedSamples": [],
+            },
+        }
 
-        # Add overlapping population details
-        self.add_overlap_population_info(population_info, row[12])
+        for dc in data_collection_map.get(pop_id, []):
+            data_type, description, title, dc_id, reuse_policy = dc
 
-        return population_info
+            if data_type not in population_info["dataCollections"]:
+                population_info["dataCollections"][data_type] = []
 
-    def add_overlap_population_info(
-        self, population_info: dict[str, Any], pop_id: int
-    ) -> dict[str, Any]:
-        """Adds the overlapping population details
+            if description not in population_info["dataCollections"][data_type]:
+                population_info["dataCollections"][data_type].append(description)
 
-        Args:
-            population_info (dict[str, Any]): The population information dictionary
-            pop_id (int): population id
+            if data_type not in population_info["dataCollections"]["dataTypes"]:
+                population_info["dataCollections"]["dataTypes"].append(data_type)
 
-        Returns:
-            dict[str, Any]: Population info dictionary with added overlapping population info
-        """
+            if not population_info["dataCollections"].get("dataReusePolicy"):
+                population_info["dataCollections"]["dataReusePolicy"] = reuse_policy
 
-        for pop in self.select_overlap_population_details(pop_id):
-            population_info["overlappingPopulations"]["populationElasticId"] = pop[
-                "populationElasticId"
-            ]
-            if (
-                pop["sharedSampleName"]
-                not in population_info["overlappingPopulations"]["sharedSamples"]
-            ):
-                population_info["overlappingPopulations"]["sharedSamples"].append(
-                    pop["sharedSampleName"]
-                )
-            population_info["overlappingPopulations"]["populationDescription"] = pop[
-                "populationDescription"
-            ]
-            # to append the population sample
+            if not population_info["dataCollections"].get("title"):
+                population_info["dataCollections"]["title"] = title
+
+        overlaps = overlap_map.get(pop_id, [])
+        if overlaps:
+            population_info["overlappingPopulations"]["populationElasticId"] = overlaps[
+                0
+            ][1]
+            population_info["overlappingPopulations"]["populationDescription"] = (
+                overlaps[0][2]
+            )
+            for row in overlaps:
+                if (
+                    row[3]
+                    not in population_info["overlappingPopulations"]["sharedSamples"]
+                ):
+                    population_info["overlappingPopulations"]["sharedSamples"].append(
+                        row[3]
+                    )
+
             population_info["overlappingPopulations"]["sharedSampleCount"] = len(
                 population_info["overlappingPopulations"]["sharedSamples"]
             )
 
         return population_info
-
-    def select_overlap_population_details(self, pop_id: int) -> list[tuple]:
-        """Select the overlap population details from the sql
-
-        Args:
-            pop_id (int): Population id
-
-        Returns:
-            list[tuple]: Returns from the fetchrow
-        """
-
-        query = """
-        SELECT 
-            p.elastic_id AS populationElasticId,
-            p.description AS populationDescription,
-            s.name AS sharedSampleName
-        FROM
-            dc_sample_pop_assign dspa1
-            JOIN dc_sample_pop_assign dspa2 ON dspa1.sample_id = dspa2.sample_id
-            JOIN population p ON dspa2.population_id = p.population_id
-            JOIN sample s ON dspa1.sample_id = s.sample_id
-        WHERE
-            dspa1.population_id = %s
-            AND dspa2.population_id != %s
-        ORDER BY
-            p.description, s.name;
-        """
-
-        db = mysql.connector.connect(
-            host=self.db_config["host"],
-            port=self.db_config["port"],
-            user=self.db_config["user"],
-            database=self.db_config["database"],
-            password=self.db_config["password"],
-        )
-        cursor = db.cursor(dictionary=True)
-        cursor.execute(query, (pop_id, pop_id))
-        results = cursor.fetchall()
-        cursor.close()
-        db.close()
-
-        return results
